@@ -8,12 +8,12 @@ import { pom, PALETE, creangaInflorita } from '../pictura/copaci';
 import { tufaFlori } from '../pictura/stupina';
 
 const FLORI_LIVADA = [
-  { culoare: '#e8c25a', densitate: 1 },
-  { culoare: '#f1e9d6', densitate: 0.6 },
-  { culoare: '#b6a6d6', densitate: 0.3 },
+  { culoare: '#ebb431', densitate: 1 },
+  { culoare: '#f6efe0', densitate: 0.6 },
+  { culoare: '#a48ddb', densitate: 0.4 },
 ];
 
-const SOL = '#e8e8d4';
+const SOL = '#e3e9c4';
 
 // The hero branch geometry (world metres).
 const CREANGA = { w: 2.6, h: 1.3 };
@@ -28,9 +28,9 @@ export const livada: DefinitieScena = {
   claritate: 0.35,
   zbor: 13,
   mediu: mediu({
-    cerSus: '#d6e2e6',
-    cerMijloc: '#e8ece6',
-    cerOrizont: '#f4eee2',
+    cerSus: '#bcd8e8',
+    cerMijloc: '#e0ece6',
+    cerOrizont: '#f6ecd6',
     soareCuloare: '#3a2c18',
     soareAz: -0.62,
     soareEl: 0.18,
@@ -41,7 +41,7 @@ export const livada: DefinitieScena = {
     nori: 0.12,
     noriCuloare: '#fbfaf5',
   }),
-  particule: { petale: { culori: ['#f4d7db', '#fbf3f1'], densitate: 0.3 } },
+  particule: { petale: { culori: ['#f0bcc6', '#fbf0ef'], densitate: 0.3 } },
 
   fasii: (ctx) => biom(ctx, 'livada', { sol: SOL, flori: FLORI_LIVADA }),
 
@@ -50,7 +50,7 @@ export const livada: DefinitieScena = {
       cheie: 'orizont-munti',
       seed: 31,
       sol: '#ecebe6',
-      spalare: '#bdc8d2',
+      spalare: '#a7bdd6',
       banda: 300,
       varf: 300,
       distanta: 2600,
@@ -63,7 +63,7 @@ export const livada: DefinitieScena = {
       cheie: 'orizont-dealuri',
       seed: 32,
       sol: '#e9eadf',
-      spalare: '#bccab8',
+      spalare: '#a5c49a',
       banda: 90,
       varf: 80,
       distanta: 1500,
@@ -128,11 +128,11 @@ export const livada: DefinitieScena = {
         deal({
           seed: d.seed,
           sol: SOL,
-          spalare: '#bfcc9f',
+          spalare: '#a6c77c',
           creasta: 0.25,
           amplitudine: 0.25,
           frecventa: 4,
-          livada: { culoare: '#efd4d6', randuri: 5, marime: 6 },
+          livada: { culoare: '#efbcc6', randuri: 5, marime: 6 },
         }),
       );
       ctx.adauga({ tex: t, x: d.x, y: sol(z) + d.banda * 0.6 - 300, z, w: d.w, h: 300, banda: d.banda });

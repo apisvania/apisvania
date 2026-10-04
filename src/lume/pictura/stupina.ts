@@ -5,7 +5,7 @@ import { rng } from '../util';
 import { panza, linie, spalare, CERNEALA } from './panza';
 import { floareMica, type Floare } from './teren';
 
-export const CULORI_STUPI = ['#8fb0c4', '#e3b866', '#a9bb8c', '#e9e2d0', '#d39a83'];
+export const CULORI_STUPI = ['#6f9fc4', '#eab04a', '#8fb86a', '#ebe0c6', '#dc8466'];
 
 /** One hive in three-quarter view, 256×256, standing on the bottom edge. */
 export function stup(seed: number, culoare: string, W = 256, H = 256) {

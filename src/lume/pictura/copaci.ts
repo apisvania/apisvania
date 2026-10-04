@@ -12,10 +12,10 @@ export interface PaletaCoroana {
 }
 
 export const PALETE = {
-  mar: { spalare: '#ecd3d5', flori: '#e7a9b5' },
-  cires: { spalare: '#eee6e1', flori: '#f2d6da' },
-  prun: { spalare: '#e6e8d8', flori: '#f4ecd8' },
-  tei: { spalare: '#a9b98a' },
+  mar: { spalare: '#f1c3cc', flori: '#e2849b' },
+  cires: { spalare: '#f4dde0', flori: '#ecaebc' },
+  prun: { spalare: '#e3edc7', flori: '#f0dda6' },
+  tei: { spalare: '#92b36a' },
 } satisfies Record<string, PaletaCoroana>;
 
 export interface OptPom {
@@ -55,7 +55,7 @@ export function pom(o: OptPom) {
       o.seed + i,
     );
     blobs.push(p);
-    spalare(g, p, o.paleta.spalare, 0.6, 3 * k, 2 * k);
+    spalare(g, p, o.paleta.spalare, 0.78, 3 * k, 2 * k);
   }
 
   // Trunk: two ink edges over a pale wash.
@@ -66,7 +66,7 @@ export function pom(o: OptPom) {
   trunk.lineTo(varf.x + tw * 0.5, varf.y);
   trunk.lineTo(baza.x + tw, baza.y);
   trunk.closePath();
-  spalare(g, trunk, '#b8a48c', 0.6, 1, 0);
+  spalare(g, trunk, '#b0916d', 0.7, 1, 0);
   linie(g, [[baza.x - tw, baza.y], [varf.x - tw * 0.5, varf.y]], 2.2 * k, 0.75, 0.8, o.seed);
   linie(g, [[baza.x + tw, baza.y], [varf.x + tw * 0.5, varf.y]], 1.6 * k, 0.55, 0.8, o.seed + 1);
 
@@ -107,7 +107,7 @@ export function pom(o: OptPom) {
 
 // ── The close-up branch ──────────────────────────────────────────────────
 
-const PETALA = '#f4d7db';
+const PETALA = '#f0bcc6';
 const POLEN = '#e7bf55';
 
 /** One open five-petal blossom: pale wash petals with a fine ink outline. */
@@ -171,7 +171,7 @@ function boboc(g: Ctx, x: number, y: number, R: number, rot: number) {
   const p = pata(0, 0, R * 0.6, R * 0.8, 0.05, x);
   g.fillStyle = '#fbf8f2';
   g.fill(p);
-  spalare(g, p, '#e9a9b6', 0.8, 1.5, 1);
+  spalare(g, p, '#e58aa0', 0.85, 1.5, 1);
   g.strokeStyle = CERNEALA;
   g.globalAlpha = 0.65;
   g.lineWidth = 2.2;
@@ -192,7 +192,7 @@ function frunza(g: Ctx, x: number, y: number, L: number, rot: number, r: Rng) {
   p.moveTo(0, 0);
   p.bezierCurveTo(L * 0.3, -Wf, L * 0.75, -Wf * 0.8, L, 0);
   p.bezierCurveTo(L * 0.75, Wf * 0.8, L * 0.3, Wf, 0, 0);
-  spalare(g, p, '#b4c68c', 0.75, 4, 3);
+  spalare(g, p, '#9fc46e', 0.85, 4, 3);
   g.strokeStyle = CERNEALA;
   g.globalAlpha = 0.6;
   g.lineWidth = 2.2;
@@ -241,7 +241,7 @@ export function creangaInflorita(seed: number, W = 2048, H = 1024) {
   sus.forEach(([x, y], i) => (i ? corp.lineTo(x, y) : corp.moveTo(x, y)));
   [...jos].reverse().forEach(([x, y]) => corp.lineTo(x, y));
   corp.closePath();
-  spalare(g, corp, '#b9a088', 0.7, 3, 2);
+  spalare(g, corp, '#b08d68', 0.8, 3, 2);
   linie(g, sus, 3, 0.75, 1.4, seed);
   linie(g, jos, 2.2, 0.55, 1.4, seed + 1);
 

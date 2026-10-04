@@ -9,12 +9,12 @@ import { pom, PALETE } from '../pictura/copaci';
 import { stup, gard, tufaFlori, CULORI_STUPI } from '../pictura/stupina';
 
 const FLORI_LUNCA = [
-  { culoare: '#f1e9d6', densitate: 0.8 },
-  { culoare: '#e8c25a', densitate: 0.6 },
-  { culoare: '#a7b6d8', densitate: 0.4 },
+  { culoare: '#f6efe0', densitate: 0.8 },
+  { culoare: '#ebb431', densitate: 0.7 },
+  { culoare: '#8aa3e2', densitate: 0.5 },
 ];
 
-const SOL = '#e9e7d4';
+const SOL = '#e5e8c6';
 
 export const deschidere: DefinitieScena = {
   id: 'deschidere',
@@ -26,9 +26,9 @@ export const deschidere: DefinitieScena = {
   claritate: 0.08,
   zbor: 12,
   mediu: mediu({
-    cerSus: '#d5d8e0',
-    cerMijloc: '#e7dfd8',
-    cerOrizont: '#f1dbc6',
+    cerSus: '#c3cbe2',
+    cerMijloc: '#ebd8d2',
+    cerOrizont: '#f6cfae',
     soareCuloare: '#4a2c1c',
     soareAz: -0.42,
     soareEl: 0.03,
@@ -48,7 +48,7 @@ export const deschidere: DefinitieScena = {
       cheie: 'orizont-munti',
       seed: 11,
       sol: '#ebe3dc',
-      spalare: '#c3bfd0',
+      spalare: '#b1abd0',
       banda: 260,
       varf: 230,
       distanta: 2600,
@@ -61,7 +61,7 @@ export const deschidere: DefinitieScena = {
       cheie: 'orizont-dealuri',
       seed: 12,
       sol: '#e9e4da',
-      spalare: '#bcc0bd',
+      spalare: '#a9bba3',
       banda: 90,
       varf: 70,
       distanta: 1500,
@@ -84,11 +84,11 @@ export const deschidere: DefinitieScena = {
         deal({
           seed: d.seed,
           sol: SOL,
-          spalare: '#b9c49c',
+          spalare: '#a3c07c',
           creasta: 0.3,
           amplitudine: 0.28,
           frecventa: 4,
-          padure: { culoare: '#a3b28a', densitate: 0.4, marime: 16 },
+          padure: { culoare: '#86a866', densitate: 0.4, marime: 16 },
         }),
       );
       ctx.adauga({ tex: t, x: d.x, y: sol(z) + d.banda * 0.6 - 300, z, w: d.w, h: 300, banda: d.banda });

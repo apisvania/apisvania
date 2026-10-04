@@ -109,8 +109,8 @@ export class Albina {
     g.lineCap = 'round';
 
     // A simple drawing: one round body, two stripes, a head, two wings.
-    const cerneala = '#3d352e';
-    const contur = lw * 2.2;
+    const cerneala = '#6a5d52';
+    const contur = lw * 1.7;
     this.aripa2(g, true, contur);
 
     // Legs: three short strokes, tucked when sitting.
@@ -132,7 +132,7 @@ export class Albina {
 
     const corp = new Path2D();
     corp.ellipse(-0.1, 0.04, 0.4, 0.25, 0.08, 0, Math.PI * 2);
-    g.fillStyle = '#ecb94f';
+    g.fillStyle = '#e4c88e';
     g.fill(corp);
     g.save();
     g.clip(corp);
@@ -143,7 +143,7 @@ export class Albina {
       g.fill();
     }
     // A touch of light on top.
-    g.fillStyle = 'rgba(255,250,235,0.55)';
+    g.fillStyle = 'rgba(255,250,235,0.35)';
     g.beginPath();
     g.ellipse(0.02, -0.1, 0.16, 0.05, -0.1, 0, Math.PI * 2);
     g.fill();
@@ -197,10 +197,10 @@ export class Albina {
     const L = departe ? 0.38 : 0.46;
     const forma = new Path2D();
     forma.ellipse(L * 0.5, 0, L * 0.5, L * 0.24, 0, 0, Math.PI * 2);
-    g.fillStyle = departe ? 'rgba(225,232,238,0.55)' : 'rgba(250,252,255,0.78)';
+    g.fillStyle = departe ? 'rgba(230,235,240,0.4)' : 'rgba(248,250,252,0.55)';
     g.fill(forma);
-    g.strokeStyle = '#3d352e';
-    g.globalAlpha = departe ? 0.5 : 0.85;
+    g.strokeStyle = '#6a5d52';
+    g.globalAlpha = departe ? 0.35 : 0.6;
     g.lineWidth = contur * 0.8;
     g.stroke(forma);
     if (!departe) {
