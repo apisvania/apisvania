@@ -284,29 +284,119 @@ export function casuta(seed: number, W = 512, H = 512) {
 
 // ── Close-ups (2048×1024). Each returns the canvas and the landing point. ──
 
-type Erou = { canvas: HTMLCanvasElement; ancora: { u: number; v: number } };
+/** A stem or trunk leaving the bottom edge of a close-up: where (u) and how thick (px). */
+export type Tulpina = { u: number; lat: number };
+export type Erou = { canvas: HTMLCanvasElement; ancora: { u: number; v: number }; tulpini: Tulpina[] };
 
-function erou(seed: number, desen: (g: Ctx, W: number, H: number, r: Rng) => { x: number; y: number }): Erou {
+/** Where a polyline crosses the bottom edge (y = H) of the canvas. */
+export function laMargine(pts: [number, number][], H: number): number {
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [x0, y0] = pts[i];
+    const [x1, y1] = pts[i + 1];
+    if ((y0 - H) * (y1 - H) <= 0 && y0 !== y1) return x0 + ((x1 - x0) * (H - y0)) / (y1 - y0);
+  }
+  return pts[0][0];
+}
+
+function erou(
+  seed: number,
+  desen: (g: Ctx, W: number, H: number, r: Rng, tulpini: Tulpina[]) => { x: number; y: number },
+): Erou {
   const W = 2048;
   const H = 1024;
   const { c, g } = panza(W, H);
-  const a = desen(g, W, H, rng(seed));
-  return { canvas: c, ancora: { u: a.x / W, v: a.y / H } };
+  const tulpini: Tulpina[] = [];
+  const a = desen(g, W, H, rng(seed), tulpini);
+  return { canvas: c, ancora: { u: a.x / W, v: a.y / H }, tulpini: tulpini.map((t) => ({ u: t.u / W, lat: t.lat })) };
+}
+
+/** Draws a stem from below the bottom edge (so it is full width there) and records it. */
+function tulpinaSol(g: Ctx, pts: [number, number][], lat: number, H: number, tulpini: Tulpina[], seed: number) {
+  linie(g, pts, lat, 0.7, 2, seed);
+  tulpini.push({ u: laMargine(pts, H), lat });
+}
+
+/**
+ * The part of a close-up's stems (or trunk) between its bottom edge and the
+ * ground, with a little grass at the foot (512×512, stretched to fit).
+ */
+export function picior(tulpini: Tulpina[], seed: number, W = 512, H = 512) {
+  const { c, g } = panza(W, H);
+  const r = rng(seed);
+  for (const t of tulpini) {
+    const x = t.u * W;
+    const lat = Math.max(1.5, t.lat * (W / 2048) * 1.6);
+    g.save();
+    g.strokeStyle = CERNEALA;
+    g.globalAlpha = 0.8;
+    g.lineCap = 'round';
+    g.lineWidth = lat;
+    g.beginPath();
+    g.moveTo(x, -6);
+    for (let y = 0; y <= H + 6; y += 16) g.lineTo(x + Math.sin(y * 0.02 + seed) * 1.2, y);
+    g.stroke();
+    g.restore();
+    // Grass and earth at the foot.
+    spalare(g, pata(x, H - 6, lat * 2 + 24, 10, 0.3, x), '#8a9a6a', 0.55, 1, 0);
+    for (let i = 0; i < 7; i++) {
+      const gx = x + r.range(-30, 30);
+      linie(g, [[gx, H + 2], [gx + r.range(-8, 8), H - r.range(14, 34)]], 1.4, 0.45, 0.5, i + x);
+    }
+  }
+  return c;
+}
+
+export type TipCoroana = 'mar' | 'salcam' | 'brad';
+
+/** The crown of the tree the close-up branch belongs to (1024×768, base on the bottom). */
+export function coroanaGazda(tip: TipCoroana, seed: number, W = 1024, H = 768) {
+  const { c, g } = panza(W, H);
+  const r = rng(seed);
+  if (tip === 'brad') {
+    for (let i = 0; i < 9; i++) {
+      const t = i / 8;
+      const y = lerp(H * 0.98, H * 0.08, t);
+      const L = lerp(W * 0.46, W * 0.06, t);
+      const cad = L * 0.3;
+      const p = new Path2D();
+      p.moveTo(W / 2 - L, y + cad);
+      p.quadraticCurveTo(W / 2 - L * 0.4, y - cad * 0.6, W / 2, y - cad * 0.9);
+      p.quadraticCurveTo(W / 2 + L * 0.4, y - cad * 0.6, W / 2 + L, y + cad);
+      p.quadraticCurveTo(W / 2, y + cad * 0.5, W / 2 - L, y + cad);
+      spalare(g, p, '#405848', 0.75, 2, 1);
+    }
+    return c;
+  }
+  // A light, broken crown: a few loose washes, lots of silk showing through.
+  const culoare = tip === 'mar' ? '#f3d0d7' : '#b4c494';
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + r.range(0, 0.8);
+    spalare(g, pata(W / 2 + Math.cos(a) * W * 0.24, H * 0.5 + Math.sin(a) * H * 0.22, W * r.range(0.1, 0.16), H * r.range(0.12, 0.18), 0.25, seed + i), culoare, 0.45, 3, 2);
+  }
+  for (let i = 0; i < 26; i++) {
+    const a = r.range(0, Math.PI * 2);
+    const d = Math.sqrt(r.next()) * 0.4;
+    const x = W / 2 + Math.cos(a) * W * d;
+    const y = H * 0.5 + Math.sin(a) * H * d;
+    if (tip === 'mar') floareMica(g, x, y, '#e595a8', r.range(3.5, 5));
+    else spalare(g, pata(x, y + 12, 6, 16, 0.1, i), '#f3eedf', 0.9, 1, 1);
+  }
+  return c;
 }
 
 /** Rapeseed: a flowering raceme of four-petalled yellow flowers. */
 export const erouRapita = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
+  erou(seed, (g, W, H, r, sol) => {
     const tulpini: [number, number, number][] = [
-      [W * 0.38, H * 1.05, 0],
-      [W * 0.12, H * 1.05, -0.12],
-      [W * 0.62, H * 1.05, 0.15],
+      [W * 0.38, H * 1.35, 0],
+      [W * 0.12, H * 1.35, -0.12],
+      [W * 0.62, H * 1.35, 0.15],
     ];
     let ancora = { x: 0, y: 0 };
     tulpini.forEach(([bx, by, lean], idx) => {
       const vx = bx + lean * H;
       const vy = H * (idx === 0 ? 0.42 : r.range(0.3, 0.5));
-      linie(g, [[bx, by], [lerp(bx, vx, 0.5), lerp(by, vy, 0.5)], [vx, vy]], 6, 0.7, 2, idx);
+      tulpinaSol(g, [[bx, by], [lerp(bx, vx, 0.5), lerp(by, vy, 0.5)], [vx, vy]], 6, H, sol, idx);
       frunzaSimpla(g, lerp(bx, vx, 0.25), lerp(by, vy, 0.25), r.range(220, 280), idx % 2 ? -0.5 : -2.6, '#8fae8a', 0.32);
       // Seed pods below the flowers.
       for (let j = 0; j < 5; j++) {
@@ -335,11 +425,17 @@ export const erouRapita = (seed: number) =>
 
 /** Black locust: a branch of pinnate leaves with a hanging white raceme. */
 export const erouSalcam = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
-    linie(g, [[W * 1.05, H * 0.2], [W * 0.6, H * 0.26], [W * 0.05, H * 0.18]], 10, 0.75, 2, 1);
+  erou(seed, (g, W, H, r, sol) => {
+    // The trunk on the left, the branch growing from it to the right.
+    const tx = W * 0.08;
+    const trunchi = new Path2D();
+    trunchi.rect(tx - 34, -10, 68, H + 20);
+    spalare(g, trunchi, '#8a7360', 0.6, 2, 0);
+    tulpinaSol(g, [[tx, H * 1.35], [tx + 8, H * 0.5], [tx - 4, H * 0.02]], 30, H, sol, 1);
+    linie(g, [[tx, H * 0.24], [W * 0.6, H * 0.26], [W * 1.05, H * 0.2]], 10, 0.75, 2, 1);
     // Pinnate leaves along the branch.
     for (let i = 0; i < 5; i++) {
-      const bx = lerp(W * 0.95, W * 0.12, i / 4);
+      const bx = lerp(W * 0.95, W * 0.22, i / 4);
       const by = H * 0.23;
       const ex = bx + r.range(-160, 160);
       const ey = by + r.range(-160, 200);
@@ -383,10 +479,10 @@ export const erouSalcam = (seed: number) =>
 
 /** Wildflowers: a pink clover head among chamomile and cornflowers. */
 export const erouPoliflora = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
+  erou(seed, (g, W, H, r, sol) => {
     const ax = W * 0.34;
     const ay = H * 0.44;
-    linie(g, [[ax + 40, H * 1.05], [ax + 10, H * 0.7], [ax, ay + 40]], 6, 0.7, 2, 1);
+    tulpinaSol(g, [[ax + 50, H * 1.35], [ax + 10, H * 0.7], [ax, ay + 40]], 6, H, sol, 1);
     for (const [lx, ly, rot] of [
       [ax + 20, H * 0.75, -0.4],
       [ax + 20, H * 0.75, -1.5],
@@ -408,18 +504,18 @@ export const erouPoliflora = (seed: number) =>
       g.globalAlpha = 1;
     }
     // Neighbours.
-    linie(g, [[W * 0.62, H * 1.05], [W * 0.6, H * 0.5]], 4, 0.6, 2, 2);
+    tulpinaSol(g, [[W * 0.62, H * 1.35], [W * 0.6, H * 0.5]], 4, H, sol, 2);
     floareSimpla(g, W * 0.6, H * 0.5, 80, 12, '#f6f1e4', '#e8b93a', r);
-    linie(g, [[W * 0.15, H * 1.05], [W * 0.17, H * 0.62]], 4, 0.6, 2, 3);
+    tulpinaSol(g, [[W * 0.15, H * 1.35], [W * 0.17, H * 0.62]], 4, H, sol, 3);
     floareSimpla(g, W * 0.17, H * 0.6, 70, 8, '#5b7fd0', '#2b2622', r);
-    linie(g, [[W * 0.8, H * 1.05], [W * 0.82, H * 0.35]], 4, 0.6, 2, 4);
+    tulpinaSol(g, [[W * 0.8, H * 1.35], [W * 0.82, H * 0.35]], 4, H, sol, 4);
     floareSimpla(g, W * 0.82, H * 0.33, 64, 5, '#c9463a', '#2b2622', r);
     return { x: ax, y: ay - 40 };
   });
 
 /** Fir: a needled branch with drops of honeydew catching the light. */
 export const erouBrad = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
+  erou(seed, (g, W, H, r, sol) => {
     const ramura = (x0: number, y0: number, x1: number, y1: number, lat: number, s: number) => {
       linie(g, [[x0, y0], [x1, y1]], lat, 0.75, 1.5, s);
       const L = Math.hypot(x1 - x0, y1 - y0);
@@ -443,9 +539,15 @@ export const erouBrad = (seed: number) =>
       }
       g.globalAlpha = 1;
     };
-    ramura(W * 1.05, H * 0.6, W * 0.08, H * 0.42, 12, 1);
-    for (const t of [0.2, 0.45, 0.7]) {
-      const x = lerp(W * 1.05, W * 0.08, t);
+    // The trunk on the left; the branch reaches out from it to the right.
+    const tx = W * 0.07;
+    const trunchi = new Path2D();
+    trunchi.rect(tx - 30, -10, 60, H + 20);
+    spalare(g, trunchi, '#6f5a48', 0.65, 2, 0);
+    tulpinaSol(g, [[tx, H * 1.35], [tx + 6, H * 0.5], [tx, H * 0.0]], 28, H, sol, 1);
+    ramura(tx, H * 0.42, W * 1.05, H * 0.6, 12, 1);
+    for (const t of [0.3, 0.55, 0.8]) {
+      const x = lerp(W * 1.05, tx, t);
       const y = lerp(H * 0.6, H * 0.42, t);
       ramura(x, y, x - r.range(150, 260), y - r.range(120, 220), 5, t * 10);
       ramura(x, y, x - r.range(120, 220), y + r.range(100, 180), 5, t * 20);
@@ -463,17 +565,17 @@ export const erouBrad = (seed: number) =>
       g.arc(x - R * 0.3, y - R * 0.2, R * 0.25, 0, Math.PI * 2);
       g.fill();
     };
-    for (let i = 0; i < 6; i++) picatura(lerp(W * 0.9, W * 0.15, r.next()), lerp(H * 0.58, H * 0.44, r.next()) + 30, r.range(10, 16));
+    for (let i = 0; i < 6; i++) picatura(lerp(W * 0.9, W * 0.2, r.next()), lerp(H * 0.58, H * 0.44, r.next()) + 30, r.range(10, 16));
     const ax = W * 0.36;
-    const ay = lerp(H * 0.6, H * 0.42, (W * 1.05 - ax) / (W * 0.97)) - 6;
+    const ay = lerp(H * 0.42, H * 0.6, (ax - tx) / (W * 1.05 - tx)) - 6;
     picatura(ax + 50, ay + 40, 18);
     return { x: ax, y: ay };
   });
 
 /** Raspberry: a cane with leaves, a small white flower and ripe berries. */
 export const erouZmeura = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
-    linie(g, [[W * 0.95, H * 1.05], [W * 0.62, H * 0.35], [W * 0.1, H * 0.45]], 9, 0.75, 2, 1);
+  erou(seed, (g, W, H, r, sol) => {
+    tulpinaSol(g, [[W * 0.86, H * 1.35], [W * 0.62, H * 0.35], [W * 0.1, H * 0.45]], 9, H, sol, 1);
     for (let i = 0; i < 7; i++) {
       const t = r.range(0.15, 0.95);
       const x = t < 0.5 ? lerp(W * 0.95, W * 0.62, t * 2) : lerp(W * 0.62, W * 0.1, (t - 0.5) * 2);
@@ -503,14 +605,14 @@ export const erouZmeura = (seed: number) =>
 
 /** Heather: upright sprigs covered in tiny violet bells. */
 export const erouIarbaNeagra = (seed: number) =>
-  erou(seed, (g, W, H, r) => {
+  erou(seed, (g, W, H, r, sol) => {
     let ancora = { x: 0, y: 0 };
     const tulpini = 7;
     for (let i = 0; i < tulpini; i++) {
       const bx = lerp(W * 0.1, W * 0.9, i / (tulpini - 1)) + r.range(-40, 40);
       const vx = bx + r.range(-80, 80);
       const vy = i === 2 ? H * 0.36 : H * r.range(0.2, 0.5);
-      linie(g, [[bx, H * 1.05], [lerp(bx, vx, 0.5), H * 0.7], [vx, vy]], 5, 0.7, 2, i);
+      tulpinaSol(g, [[bx, H * 1.35], [lerp(bx, vx, 0.5), H * 0.7], [vx, vy]], 5, H, sol, i);
       const n = 26;
       for (let j = 0; j < n; j++) {
         const t = j / n;

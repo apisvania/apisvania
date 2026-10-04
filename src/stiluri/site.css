@@ -395,45 +395,6 @@ button {
   color: var(--cerneala-2);
 }
 
-/* ── Route map ────────────────────────────────────────────────────── */
-.harta {
-  display: none;
-}
-.calatorie-activa .harta {
-  display: block;
-  position: fixed;
-  z-index: 10;
-  left: clamp(14px, 3vw, 32px);
-  bottom: max(18px, env(safe-area-inset-bottom));
-  opacity: 0.9;
-  pointer-events: none;
-}
-.harta svg {
-  display: block;
-  overflow: visible;
-}
-.harta-drum {
-  fill: none;
-  stroke: rgba(61, 53, 46, 0.45);
-  stroke-width: 1;
-  stroke-dasharray: 2 3;
-}
-.harta-nod {
-  fill: var(--hartie);
-  stroke: rgba(61, 53, 46, 0.7);
-  stroke-width: 1;
-  transition: fill 0.3s;
-}
-.harta-nod.activ {
-  fill: var(--miere);
-  stroke: var(--cerneala);
-}
-.harta-albina {
-  fill: var(--miere);
-  stroke: var(--cerneala);
-  stroke-width: 1;
-}
-
 /* ── Buttons ──────────────────────────────────────────────────────── */
 .buton {
   display: inline-flex;
@@ -754,12 +715,6 @@ button {
   .bara-sigla span {
     display: none;
   }
-  .calatorie-activa .harta {
-    left: 50%;
-    bottom: auto;
-    top: max(70px, calc(env(safe-area-inset-top) + 56px));
-    transform: translateX(-50%) scale(0.85);
-  }
   .calatorie-activa .deschidere {
     left: 20px;
     right: 20px;
@@ -1011,9 +966,6 @@ button {
 /* At night the header sits on a dark sky. */
 .noapte .bara-sigla {
   color: var(--hartie);
-}
-.noapte .harta-drum {
-  stroke: rgba(246, 240, 228, 0.55);
 }
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1000px) {

@@ -110,6 +110,7 @@ export const salcam = scenaPeisaj({
   ],
   orizont: DEALURI_JOASE,
   erou: erouSalcam,
+  coroana: 'salcam',
   dealuri: [{ dz: 150, x: 40, w: 900, banda: 80, spalare: '#a6b97e', padure: { culoare: '#97ab78', densitate: 0.8, marime: 16 } }],
   elemente: [
     { cheie: 'salcam', pictura: (s) => salcamPom(s), variante: 3, numar: 90, zona: [-110, 110], lat: 60, w: 9, h: 9, leganare: 0.08, inaltime: 8 },
@@ -186,6 +187,7 @@ export const manaBrad = scenaPeisaj({
   floriSol: [{ culoare: '#f6efe0', densitate: 0.5 }],
   orizont: MUNTI,
   erou: erouBrad,
+  coroana: 'brad',
   dealuri: [{ dz: 140, x: -30, w: 900, banda: 120, spalare: '#7f957f', padure: { culoare: '#4f6655', densitate: 1, marime: 20, conifere: true } }],
   elemente: [
     { cheie: 'brad', pictura: (s) => brad(s), variante: 3, numar: 220, zona: [-110, 120], lat: 70, w: 5, h: 10, leganare: 0.05, inaltime: 10 },

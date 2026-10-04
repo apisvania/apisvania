@@ -213,16 +213,29 @@ function frunza(g: Ctx, x: number, y: number, L: number, rot: number, r: Rng) {
 export function creangaInflorita(seed: number, W = 2048, H = 1024) {
   const { c, g } = panza(W, H);
   const r = rng(seed);
-  const p0 = { x: W * 1.06, y: H * 0.78 };
-  const p1 = { x: W * 0.55, y: H * 0.56 };
-  const p2 = { x: W * 0.05, y: H * 0.34 };
+  // The trunk stands on the left; the branch grows out of it to the right.
+  const tx = W * 0.07;
+  const trunchi = new Path2D();
+  trunchi.moveTo(tx - 36, H + 10);
+  trunchi.lineTo(tx - 24, H * 0.3);
+  trunchi.lineTo(tx + 24, H * 0.3);
+  trunchi.lineTo(tx + 36, H + 10);
+  trunchi.closePath();
+  spalare(g, trunchi, '#8a7360', 0.7, 2, 0);
+  linie(g, [[tx, H * 1.35], [tx + 6, H * 0.55], [tx, H * 0.28]], 30, 0.7, 2, seed + 7);
+  // Two limbs fork upwards into the crown above.
+  linie(g, [[tx, H * 0.36], [tx + 70, H * 0.16], [W * 0.18, -H * 0.02]], 14, 0.65, 2, seed + 8);
+  linie(g, [[tx, H * 0.34], [tx - 30, H * 0.12], [tx - 60, -H * 0.02]], 12, 0.6, 2, seed + 9);
+  const p0 = { x: tx, y: H * 0.66 };
+  const p1 = { x: W * 0.45, y: H * 0.5 };
+  const p2 = { x: W * 1.06, y: H * 0.36 };
   const pe = (t: number) => {
     const a = (1 - t) * (1 - t);
     const b = 2 * (1 - t) * t;
     const cc = t * t;
     return { x: a * p0.x + b * p1.x + cc * p2.x, y: a * p0.y + b * p1.y + cc * p2.y };
   };
-  const gros = (t: number) => lerp(40, 9, t);
+  const gros = (t: number) => lerp(44, 14, t);
 
   // Branch: pale wash between two ink edges.
   const sus: [number, number][] = [];
@@ -269,12 +282,12 @@ export function creangaInflorita(seed: number, W = 2048, H = 1024) {
   // The landing flower: large, open, facing the camera.
   const ax = W * 0.31;
   const ay = H * 0.42;
-  const b = pe(0.74);
+  const b = pe(0.35);
   linie(g, [[b.x, b.y], [ax + 10, ay + 30]], 2.6, 0.7, 1, 3);
   frunza(g, ax + 30, ay + 40, 180, 0.6, r);
   frunza(g, ax - 20, ay + 30, 160, 2.4, r);
   boboc(g, ax + 130, ay - 80, 26, 0.9);
   floareMare(g, ax, ay, 116, 0.2, 0.93, r);
 
-  return { canvas: c, ancora: { u: ax / W, v: ay / H } };
+  return { canvas: c, ancora: { u: ax / W, v: ay / H }, tulpini: [{ u: tx / W, lat: 30 }] };
 }

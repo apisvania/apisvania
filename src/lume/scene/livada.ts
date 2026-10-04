@@ -2,7 +2,7 @@
 // bee lands on an apple blossom; behind it, rows of trees fade into paper.
 
 import type { DefinitieScena } from '../lume';
-import { mediu, biom, stratOrizont, dealuriInflorite } from './comun';
+import { mediu, biom, stratOrizont, dealuriInflorite, adaugaErou } from './comun';
 import { deal } from '../pictura/teren';
 import { pom, PALETE, creangaInflorita } from '../pictura/copaci';
 import { tufaFlori } from '../pictura/stupina';
@@ -24,7 +24,7 @@ export const livada: DefinitieScena = {
   sol: 6,
   tinta: { x: 3, inaltime: 2.3 },
   aterizare: true,
-  incadrare: { lat: [0.34, 0.5], port: [0.5, 0.27] },
+  incadrare: { lat: [0.34, 0.5], port: [0.64, 0.27] },
   claritate: 0.35,
   zbor: 13,
   mediu: mediu({
@@ -77,28 +77,8 @@ export const livada: DefinitieScena = {
   construieste(ctx) {
     const { r, z0, sol, tinta } = ctx;
 
-    // Hero: the blossoming branch, placed so its landing flower is the target.
-    let ancora = { u: 0.31, v: 0.42 };
-    const tCreanga = ctx.tex('creanga', () => {
-      const { canvas, ancora: a } = creangaInflorita(101);
-      ancora = a;
-      return canvas;
-    });
-    ctx.adauga({
-      tex: tCreanga,
-      get x() {
-        return tinta.x + (0.5 - ancora.u) * CREANGA.w;
-      },
-      get y() {
-        return tinta.y - (1 - ancora.v) * CREANGA.h;
-      },
-      z: tinta.z,
-      w: CREANGA.w,
-      h: CREANGA.h,
-      leganare: 0.004,
-      ceata: 0.1,
-      aproape: [0.25, 0.8],
-    });
+    // Hero: the blossoming branch of an apple tree; the bee lands on its flower.
+    adaugaErou(ctx, { erou: () => creangaInflorita(101), marime: CREANGA, coroana: 'mar' });
 
     // Orchard rows, airy and regular.
     const texPomi = [

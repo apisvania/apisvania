@@ -313,7 +313,6 @@ export function paginaLimba(continut, limba) {
       <button type="button" class="buton buton-plin cos-continua" data-spre-comanda hidden>${esc(t.ui.trimite_cererea)}</button>
     </aside>
 
-    <div class="harta" aria-hidden="true"></div>
     <p class="anunt" role="status" aria-live="polite" data-anunt></p>
 
     <main id="calatorie" class="calatorie">${sectiuni}

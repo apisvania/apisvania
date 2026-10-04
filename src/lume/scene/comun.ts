@@ -7,6 +7,7 @@ import { hex } from '../util';
 import { deal, fasie, ceata, type OptFasie, type Floare } from '../pictura/teren';
 import { tufaFlori } from '../pictura/stupina';
 import { pom, PALETE } from '../pictura/copaci';
+import { picior, coroanaGazda, type Erou, type TipCoroana } from '../pictura/flora';
 
 export interface MediuHex {
   cerSus: string;
@@ -119,6 +120,76 @@ export function dealuriInflorite(ctx: ContextScena, nume: string, zDe: number, z
   }
 }
 
+/**
+ * The close-up the bee lands on, rooted in the world: its stems (or trunk)
+ * continue down to the ground, and a tree's crown rises behind it.
+ */
+export function adaugaErou(
+  ctx: ContextScena,
+  o: { erou: () => Erou; marime: { w: number; h: number }; coroana?: TipCoroana },
+) {
+  const { sol, tinta } = ctx;
+  const { w, h } = o.marime;
+  let erou: Erou | null = null;
+  const obtine = () => (erou ??= o.erou());
+  const tErou = ctx.tex('erou', () => obtine().canvas);
+  const ancora = () => erou?.ancora ?? { u: 0.31, v: 0.42 };
+  const centruX = () => tinta.x + (0.5 - ancora().u) * w;
+  const jos = () => tinta.y - (1 - ancora().v) * h;
+  const solZ = sol(tinta.z);
+  ctx.adauga({
+    tex: tErou,
+    get x() {
+      return centruX();
+    },
+    get y() {
+      return jos();
+    },
+    z: tinta.z,
+    w,
+    h,
+    leganare: 0.004,
+    ceata: 0.1,
+    aproape: [0.25, 0.8],
+  });
+  // Stems or trunk from the bottom edge of the close-up down into the ground.
+  const tPicior = ctx.tex('erou-picior', () => picior(obtine().tulpini, 3));
+  ctx.adauga({
+    tex: tPicior,
+    get x() {
+      return centruX();
+    },
+    y: solZ - 0.08,
+    get h() {
+      return Math.max(0.05, jos() - solZ + 0.1);
+    },
+    z: tinta.z + 0.002,
+    w,
+    ceata: 0.1,
+    aproape: [0.25, 0.8],
+  });
+  if (o.coroana) {
+    const tip = o.coroana;
+    const tCoroana = ctx.tex('erou-coroana', () => coroanaGazda(tip, 5));
+    // Above and slightly behind the trunk, which sits near the left edge.
+    ctx.adauga({
+      tex: tCoroana,
+      get x() {
+        return centruX() - w * 0.35;
+      },
+      get y() {
+        return jos() + h * 0.85;
+      },
+      z: tinta.z + 0.9,
+      w: 4.2,
+      h: 2.8,
+      leganare: 0.03,
+      ceata: 0.15,
+      aproape: [0.3, 0.9],
+    });
+  }
+}
+
 // ── A generic landscape scene ───────────────────────────────────────────
 
 import type { DefinitieScena, Incadrare, ParticuleScena } from '../lume';
@@ -152,8 +223,10 @@ export interface OptPeisaj {
   solCuloare: string;
   floriSol: Floare[];
   orizont: Omit<OptStratOrizont, 'cheie' | 'seed'>[];
-  erou: (seed: number) => { canvas: HTMLCanvasElement; ancora: { u: number; v: number } };
+  erou: (seed: number) => Erou;
   erouMarime?: { w: number; h: number };
+  /** For trees: the crown the close-up branch belongs to. */
+  coroana?: TipCoroana;
   dealuri?: { dz: number; x: number; w: number; banda: number; spalare: string; padure?: OptStratOrizont['padure']; livada?: { culoare: string; randuri: number; marime: number } }[];
   elemente: Element[];
   particule?: ParticuleScena;
@@ -170,7 +243,8 @@ export function scenaPeisaj(o: OptPeisaj): DefinitieScena {
     sol: o.sol,
     tinta: o.tinta,
     aterizare: true,
-    incadrare: o.incadrare ?? { lat: [0.34, 0.5], port: [0.5, 0.27] },
+    // On phones, trees are framed a little to the right so their trunk stays in view.
+    incadrare: o.incadrare ?? { lat: [0.34, 0.5], port: [o.coroana ? 0.64 : 0.5, 0.27] },
     claritate: o.claritate ?? 0.35,
     zbor: o.zbor ?? 13,
     mediu: mediu(o.mediu),
@@ -179,27 +253,7 @@ export function scenaPeisaj(o: OptPeisaj): DefinitieScena {
     fundal: (ctx) => o.orizont.map((s, i) => stratOrizont(ctx, { ...s, cheie: `orizont-${i}`, seed: 600 + i * 7 + o.id.length })),
     construieste(ctx) {
       const { r, z0, sol, tinta } = ctx;
-      let ancora = { u: 0.31, v: 0.42 };
-      const tErou = ctx.tex('erou', () => {
-        const e = o.erou(101 + o.id.length);
-        ancora = e.ancora;
-        return e.canvas;
-      });
-      ctx.adauga({
-        tex: tErou,
-        get x() {
-          return tinta.x + (0.5 - ancora.u) * marime.w;
-        },
-        get y() {
-          return tinta.y - (1 - ancora.v) * marime.h;
-        },
-        z: tinta.z,
-        w: marime.w,
-        h: marime.h,
-        leganare: 0.004,
-        ceata: 0.1,
-        aproape: [0.25, 0.8],
-      });
+      adaugaErou(ctx, { erou: () => o.erou(101 + o.id.length), marime, coroana: o.coroana });
 
       for (const d of o.dealuri ?? []) {
         const z = z0 + d.dz;

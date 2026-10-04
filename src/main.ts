@@ -217,7 +217,6 @@ function porneste() {
     focusComanda = true;
   });
 
-  const harta = construiesteHarta(calatorie.N);
   const indiciu = $('.indiciu-derulare');
   let ultimaScena = -1;
   let ultimVizibil: number[] = [];
@@ -238,7 +237,6 @@ function porneste() {
       panou.scrollTo({ top: tinta.offsetTop - 20, behavior: 'smooth' });
       $<HTMLInputElement>('#f-nume').focus({ preventScroll: true });
     }
-    harta(s.p);
     if (indiciu && calatorie.derulare.inactiv < 1 && s.detaliu < 0.9) indiciu.classList.add('ascuns');
     if (s.detaliu > 0.95 && s.scena !== ultimaScena) {
       ultimaScena = s.scena;
@@ -251,44 +249,6 @@ function porneste() {
   requestAnimationFrame(() => document.documentElement.classList.add('pregatit'));
 }
 
-function construiesteHarta(N: number) {
-  const cont = $('.harta');
-  const W = 156;
-  const H = 40;
-  const cx = W / 2;
-  const cy = H / 2;
-  const rx = W / 2 - 10;
-  const ry = H / 2 - 9;
-  const punct = (u: number) => {
-    const t = Math.PI + u * Math.PI * 2;
-    return [cx + Math.cos(t) * rx, cy + Math.sin(t) * ry * (Math.sin(t) < 0 ? 1 : 0.55) + Math.sin(u * Math.PI * 6) * 1.5];
-  };
-  let d = '';
-  for (let k = 0; k <= 96; k++) {
-    const [x, y] = punct(k / 96);
-    d += `${k ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
-  }
-  const hex = (x: number, y: number, r: number) =>
-    Array.from({ length: 6 }, (_, i) => {
-      const a = Math.PI / 6 + (i * Math.PI) / 3;
-      return `${(x + Math.cos(a) * r).toFixed(1)},${(y + Math.sin(a) * r).toFixed(1)}`;
-    }).join(' ');
-  const noduri = Array.from({ length: N }, (_, i) => {
-    const [x, y] = punct(i / N);
-    return `<polygon class="harta-nod" data-nod="${i}" points="${hex(x, y, 4.2)}"/>`;
-  }).join('');
-  cont.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><path class="harta-drum" d="${d}"/>${noduri}<circle class="harta-albina" r="3.2"/></svg>`;
-  const albina = $('.harta-albina', cont);
-  const nod = $$('.harta-nod', cont);
-  return (p: number) => {
-    const u = mod(p, N) / N;
-    const [x, y] = punct(u);
-    albina.setAttribute('cx', x.toFixed(2));
-    albina.setAttribute('cy', y.toFixed(2));
-    const activ = mod(Math.round(p), N);
-    nod.forEach((n, i) => n.classList.toggle('activ', i === activ));
-  };
-}
 
 
 // ── Order request ──────────────────────────────────────────────────────
