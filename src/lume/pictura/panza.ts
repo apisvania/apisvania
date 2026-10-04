@@ -1,5 +1,7 @@
 // Canvas helpers for procedural painting.
 
+import { JAPONEZ, TUS, ton } from '../stil';
+
 export type Ctx = CanvasRenderingContext2D;
 
 export function panza(w: number, h: number) {
@@ -68,7 +70,9 @@ export function pataMoale(g: Ctx, x: number, y: number, r: number, culoare: stri
 
 // ── Sketch style: hand-drawn ink lines and light watercolour washes ──────
 
-export const CERNEALA = '#3d352e';
+export const CERNEALA = JAPONEZ ? TUS : '#3d352e';
+/** Paper under washes (silk in the Japanese variant). */
+export const HARTIE = JAPONEZ ? '#f4ecda' : '#fbf8f2';
 
 /** A wobbly, hand-drawn ink line through the given points. */
 export function linie(
@@ -81,6 +85,7 @@ export function linie(
   culoare = CERNEALA,
 ) {
   if (pts.length < 2) return;
+  if (JAPONEZ) return pensula(g, pts, latime, alfa, tremur, seed);
   g.save();
   g.lineCap = 'round';
   g.lineJoin = 'round';
@@ -130,6 +135,7 @@ export function pata(cx: number, cy: number, rx: number, ry: number, neregulat =
 
 /** A light watercolour wash: soft fill, darker pooled edge, slight misregistration. */
 export function spalare(g: Ctx, p: Path2D, culoare: string, alfa = 0.5, dx = 2, dy = 1.5) {
+  if (JAPONEZ) return spalareTus(g, p, ton(culoare), alfa);
   g.save();
   g.fillStyle = culoare;
   g.globalAlpha = alfa * 0.55;
@@ -147,6 +153,8 @@ export function spalare(g: Ctx, p: Path2D, culoare: string, alfa = 0.5, dx = 2, 
 
 /** Outline of a blob drawn as a loose, broken scribble. */
 export function contur(g: Ctx, p: Path2D, latime: number, alfa: number) {
+  // Sumi-e crowns are "boneless": no outline, only the wash.
+  if (JAPONEZ) return;
   g.save();
   g.strokeStyle = CERNEALA;
   g.lineWidth = latime;
@@ -154,5 +162,62 @@ export function contur(g: Ctx, p: Path2D, latime: number, alfa: number) {
   g.lineCap = 'round';
   g.setLineDash([latime * 14, latime * 5, latime * 6, latime * 3]);
   g.stroke(p);
+  g.restore();
+}
+
+// ── Japanese ink painting ────────────────────────────────────────────────
+
+/** A brush stroke: tapers in at the start, swells, and lifts off at the end. */
+function pensula(g: Ctx, pts: [number, number][], latime: number, alfa: number, tremur: number, seed: number) {
+  const linie: [number, number][] = [];
+  let s = seed * 7.3;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [x0, y0] = pts[i];
+    const [x1, y1] = pts[i + 1];
+    const L = Math.hypot(x1 - x0, y1 - y0);
+    const n = Math.max(1, Math.ceil(L / 5));
+    const nx = -(y1 - y0) / (L || 1);
+    const ny = (x1 - x0) / (L || 1);
+    for (let k = i === 0 ? 0 : 1; k <= n; k++) {
+      const t = k / n;
+      s += 0.31;
+      const o = Math.sin(s * 1.3) * tremur * 0.5;
+      linie.push([x0 + (x1 - x0) * t + nx * o, y0 + (y1 - y0) * t + ny * o]);
+    }
+  }
+  g.save();
+  g.strokeStyle = TUS;
+  g.lineCap = 'round';
+  g.globalAlpha = Math.min(1, alfa * 1.15);
+  const N = linie.length - 1;
+  for (let i = 0; i < N; i++) {
+    const t = i / N;
+    const forma = Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.15 + 0.04)), 0.55);
+    // Dry-brush: the ink thins a little towards the end of the stroke.
+    g.lineWidth = Math.max(0.4, latime * (0.35 + 1.5 * forma) * (1 - t * 0.25));
+    g.beginPath();
+    g.moveTo(linie[i][0], linie[i][1]);
+    g.lineTo(linie[i + 1][0], linie[i + 1][1]);
+    g.stroke();
+  }
+  g.restore();
+}
+
+/** A soft ink wash with bleeding edges (drawn through a blurred shadow). */
+function spalareTus(g: Ctx, p: Path2D, culoare: string, alfa: number) {
+  g.save();
+  // Draw the shape far off-canvas and let only its blurred shadow land in
+  // place. Shadow offsets ignore the transform, so shift in device space.
+  const departe = 10000;
+  g.setTransform(new DOMMatrix().translate(-departe, 0).multiply(g.getTransform()));
+  g.shadowOffsetX = departe;
+  g.shadowColor = culoare;
+  g.fillStyle = culoare;
+  g.shadowBlur = 8;
+  g.globalAlpha = Math.min(1, alfa * 1.05);
+  g.fill(p);
+  g.shadowBlur = 2;
+  g.globalAlpha = alfa * 0.5;
+  g.fill(p);
   g.restore();
 }

@@ -4,6 +4,7 @@
 // depth-of-field blur taken from the texture's mipmaps.
 
 import type { RGB } from './util';
+import { JAPONEZ } from './stil';
 
 export interface Textura {
   tex: WebGLTexture;
@@ -150,6 +151,7 @@ uniform float u_f;      // focal length in device px
 uniform vec3 u_sus, u_mijloc, u_orizont, u_soareCul, u_noriCul;
 uniform vec3 u_soare;   // screen x, screen y (device px, y down), size
 uniform float u_stele, u_nori, u_timp;
+uniform float u_stil;    // 0 = sketch, 1 = Japanese
 uniform vec2 u_deriva;  // cloud drift from camera travel
 out vec4 o;
 float h21(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
@@ -175,10 +177,16 @@ void main() {
   vec2 ds = (fc - u_soare.xy) / u_f;
   float r = length(ds * vec2(1.0, 1.35));
   float halo = exp(-r * 3.2) * 0.35 + exp(-r * 14.0) * 0.25;
-  c += u_soareCul * halo;
+  c += u_soareCul * halo * (1.0 - u_stil * 0.85);
   // Sketched sun: a warm wash inside a thin, slightly uneven ink ring.
   float ds1 = length(ds);
   float disc = smoothstep(u_soare.z * 1.04, u_soare.z * 0.96, ds1);
+  if (u_stil > 0.5) {
+    // A flat vermilion disc, as in woodblock prints.
+    c = mix(c, u_soareCul, disc * 0.92);
+    o = vec4(c + (h21(fc + u_timp) - 0.5) / 255.0, 1.0);
+    return;
+  }
   c = mix(c, c + u_soareCul * 0.9, disc);
   float unghi = atan(ds.y, ds.x);
   float raza = u_soare.z * (1.0 + 0.04 * sin(unghi * 3.0 + 1.0));
@@ -352,6 +360,7 @@ export class Randare {
       mediu.soareMarime,
     );
     gl.uniform1f(s.u.u_stele, mediu.stele);
+    gl.uniform1f(s.u.u_stil, JAPONEZ ? 1 : 0);
     gl.uniform1f(s.u.u_nori, mediu.nori);
     gl.uniform1f(s.u.u_timp, timp);
     gl.uniform2f(s.u.u_deriva, deriva[0], deriva[1]);

@@ -2,7 +2,7 @@
 // a rustic fence and small clumps of wildflowers.
 
 import { rng } from '../util';
-import { panza, linie, spalare, CERNEALA } from './panza';
+import { panza, linie, spalare, CERNEALA, HARTIE } from './panza';
 import { floareMica, type Floare } from './teren';
 
 export const CULORI_STUPI = ['#6f9fc4', '#eab04a', '#8fb86a', '#ebe0c6', '#dc8466'];
@@ -35,7 +35,7 @@ export function stup(seed: number, culoare: string, W = 256, H = 256) {
   acoperis.lineTo(x0 + ad - 6 * k, y0 - urc - 6 * k);
   acoperis.closePath();
 
-  g.fillStyle = '#fbf8f2';
+  g.fillStyle = HARTIE;
   g.fill(fata);
   g.fill(lat);
   spalare(g, fata, culoare, 0.85, 4 * k, 2 * k);

@@ -4,6 +4,9 @@ import './stiluri/site.css';
 import { Calatorie, type StareCalatorie } from './lume/calatorie';
 import { Cos } from './ui/cos';
 import { mod } from './lume/util';
+import { JAPONEZ } from './lume/stil';
+
+document.documentElement.classList.toggle('stil-japonez', JAPONEZ);
 
 interface DateClient {
   limba: string;

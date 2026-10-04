@@ -4,6 +4,7 @@
 // on flowers in the close-up scenes.
 
 import { clamp, lerp, noise1, damp, rng } from './util';
+import { JAPONEZ } from './stil';
 
 const r = rng(42);
 
@@ -109,7 +110,7 @@ export class Albina {
     g.lineCap = 'round';
 
     // A simple drawing: one round body, two stripes, a head, two wings.
-    const cerneala = '#6a5d52';
+    const cerneala = JAPONEZ ? '#3a332d' : '#6a5d52';
     const contur = lw * 1.7;
     this.aripa2(g, true, contur);
 
@@ -132,7 +133,7 @@ export class Albina {
 
     const corp = new Path2D();
     corp.ellipse(-0.1, 0.04, 0.4, 0.25, 0.08, 0, Math.PI * 2);
-    g.fillStyle = '#e4c88e';
+    g.fillStyle = JAPONEZ ? '#d9bd84' : '#e4c88e';
     g.fill(corp);
     g.save();
     g.clip(corp);

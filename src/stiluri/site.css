@@ -833,3 +833,8 @@ button {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Japanese ink-painting variant (?stil=japonez): silk instead of paper. */
+.stil-japonez {
+  --lume-hartie: #f1e8d4;
+}

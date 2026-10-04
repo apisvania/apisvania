@@ -2,6 +2,7 @@ import type { DefinitieScena } from '../lume';
 import traseu from '../traseu.json';
 import { deschidere } from './deschidere';
 import { livada } from './livada';
+import { mediuStil } from '../stil';
 
 const TOATE: Record<string, DefinitieScena> = {
   deschidere,
@@ -13,6 +14,6 @@ export function sceneDinTraseu(): DefinitieScena[] {
   return traseu.scene.map((s) => {
     const d = TOATE[s.id];
     if (!d) throw new Error(`Scena „${s.id}” nu are încă peisaj.`);
-    return d;
+    return { ...d, mediu: mediuStil(d.id, d.mediu) };
   });
 }

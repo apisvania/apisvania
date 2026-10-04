@@ -3,6 +3,7 @@
 
 import { fbm1, rng, mixHex } from '../util';
 import { panza, inBucla, linie, pata, spalare, pataMoale, CERNEALA, type Ctx } from './panza';
+import { ton } from '../stil';
 
 /** Rows 0..BANDA of every terrain texture hold detail; the rows below are a flat fill. */
 export const BANDA = 0.86;
@@ -30,7 +31,8 @@ export interface OptDeal {
   margini?: number;
 }
 
-export function deal(o: OptDeal) {
+export function deal(o0: OptDeal) {
+  const o = { ...o0, sol: ton(o0.sol), spalare: ton(o0.spalare) };
   const W = o.w ?? 2048;
   const H = o.h ?? 512;
   const { c, g } = panza(W, H);
@@ -138,7 +140,7 @@ export function estompeazaMargini(g: Ctx, W: number, H: number, f: number) {
 /** A small flower head: a dab of colour with a hint of ink. */
 export function floareMica(g: Ctx, x: number, y: number, culoare: string, m: number) {
   g.save();
-  g.fillStyle = culoare;
+  g.fillStyle = ton(culoare);
   g.globalAlpha = 0.75;
   g.beginPath();
   g.arc(x, y, m, 0, Math.PI * 2);
@@ -164,7 +166,8 @@ export interface OptFasie {
 }
 
 /** A seamless strip of ground: bare paper with a faint line, sparse grass ticks and a few flowers. */
-export function fasie(o: OptFasie) {
+export function fasie(o0: OptFasie) {
+  const o = { ...o0, sol: ton(o0.sol) };
   const W = o.w ?? 1024;
   const H = o.h ?? 256;
   const { c, g } = panza(W, H);
@@ -268,5 +271,38 @@ export function ceata(seed: number, culoare = '#ffffff', w = 1024, h = 128) {
     g.restore();
   }
   estompeazaMargini(g, w, h, 0.15);
+  return c;
+}
+
+/** Kasumi: a stylised band of golden mist, as in Japanese screens and prints (1024×128). */
+export function kasumi(seed: number, W = 1024, H = 128) {
+  const { c, g } = panza(W, H);
+  const r = rng(seed);
+  const culoare = '#efe3c2';
+  const forme: Path2D[] = [];
+  let x = r.range(10, 60);
+  while (x < W - 120) {
+    const L = r.range(220, 420);
+    const y = H * r.range(0.35, 0.6);
+    const h = H * r.range(0.22, 0.32);
+    const p = new Path2D();
+    p.roundRect(x, y - h / 2, Math.min(L, W - x - 20), h, h / 2);
+    forme.push(p);
+    x += L * r.range(0.55, 0.8);
+  }
+  g.save();
+  g.setTransform(new DOMMatrix().translate(-10000, 0).multiply(g.getTransform()));
+  g.shadowOffsetX = 10000;
+  g.shadowColor = culoare;
+  g.shadowBlur = 12;
+  g.fillStyle = culoare;
+  g.globalAlpha = 0.85;
+  for (const p of forme) g.fill(p);
+  g.restore();
+  g.strokeStyle = '#cdb47a';
+  g.globalAlpha = 0.18;
+  g.lineWidth = 1.5;
+  for (const p of forme) g.stroke(p);
+  g.globalAlpha = 1;
   return c;
 }

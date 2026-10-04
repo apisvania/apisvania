@@ -2,7 +2,7 @@
 // blobs, and the close-up blossom branch the bee lands on in the orchard.
 
 import { rng, lerp, type Rng } from '../util';
-import { panza, linie, pata, spalare, contur, CERNEALA, type Ctx } from './panza';
+import { panza, linie, pata, spalare, contur, CERNEALA, HARTIE, type Ctx } from './panza';
 import { floareMica } from './teren';
 
 export interface PaletaCoroana {
@@ -128,7 +128,7 @@ export function floareMare(g: Ctx, x: number, y: number, R: number, rot: number,
     p.bezierCurveTo(L * 0.25, -Wp * 0.62, L * 0.82, -Wp * 0.72, L, -Wp * 0.08);
     p.bezierCurveTo(L * 1.04, Wp * 0.18, L * 0.86, Wp * 0.7, L * 0.45, Wp * 0.6);
     p.bezierCurveTo(L * 0.2, Wp * 0.5, R * 0.05, Wp * 0.15, R * 0.05, 0);
-    g.fillStyle = '#fbf8f2';
+    g.fillStyle = HARTIE;
     g.fill(p);
     spalare(g, p, PETALA, 0.75, 2, 1);
     g.strokeStyle = CERNEALA;
@@ -169,7 +169,7 @@ function boboc(g: Ctx, x: number, y: number, R: number, rot: number) {
   g.translate(x, y);
   g.rotate(rot);
   const p = pata(0, 0, R * 0.6, R * 0.8, 0.05, x);
-  g.fillStyle = '#fbf8f2';
+  g.fillStyle = HARTIE;
   g.fill(p);
   spalare(g, p, '#e58aa0', 0.85, 1.5, 1);
   g.strokeStyle = CERNEALA;

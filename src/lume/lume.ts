@@ -3,6 +3,8 @@
 // answers "what does the camera see at journey progress p?".
 
 import type { Carte, CarteVizibila, Camera, Mediu, Textura, Randare } from './randare';
+import { JAPONEZ } from './stil';
+import { kasumi } from './pictura/teren';
 import { clamp, lerp, mod, rng, smoothstep, smootherstep, fbm1, mixRGB, type Rng, type RGB } from './util';
 
 export interface ContextScena {
@@ -230,6 +232,7 @@ export class Lume {
       const s = this.scene[i];
       const ctx = this.context(i);
       s.construieste(ctx);
+      if (JAPONEZ) this.adaugaKasumi(this.context(i));
       this.fundaluri.push(s.fundal(this.context(i)));
     }
     this.construiesteTeren();
@@ -260,6 +263,30 @@ export class Lume {
         return this.sol(z) + inaltime < p.y - 1.8;
       },
     };
+  }
+
+  /** Bands of golden mist drifting through each scene (Japanese variant). */
+  private adaugaKasumi(ctx: ContextScena) {
+    const texturi = [0, 1, 2].map((k) => ctx.tex(`kasumi-${k}`, () => kasumi(300 + k)));
+    const { r, z0, sol, tinta } = ctx;
+    // Low bands between the layers of the landscape, never across the close-up.
+    for (const [dz, inalt, w, dx] of [
+      [80, 3, 180, 40],
+      [150, 6, 300, -60],
+    ] as const) {
+      const z = z0 + dz + r.range(-3, 3);
+      this.carti.push({
+        tex: r.pick(texturi),
+        x: tinta.x + dx + r.range(-5, 5),
+        y: sol(z) + inalt,
+        z,
+        w,
+        h: w * 0.125,
+        ceata: 0.25,
+        aproape: [6, 14],
+        oglinda: r.chance(0.5),
+      });
+    }
   }
 
   /** Meadow strips covering the ground along the whole loop. */
