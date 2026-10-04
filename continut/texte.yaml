@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────────────
+#  TEXTELE SITE-ULUI (în afară de produse)
+#
+#  Fiecare limbă are propriul bloc: „ro:” și „en:”.
+#  Pentru o limbă nouă (de exemplu germana), copiază tot blocul „en:”,
+#  redenumește-l „de:”, tradu textele și adaug-o în lista „limbi”.
+# ─────────────────────────────────────────────────────────────────────
+
+limbi: [ro, en]
+limba_implicita: ro
+domeniu: https://apisvania.com
+
+ro:
+  nume_limba: Română
+  meta:
+    titlu: Apisvania — miere din România, urmând albina
+    descriere: Urmează albina prin livezi, păduri de salcâm, câmpuri cu flori, păduri de brad și pajiști alpine. Fiecare borcan Apisvania vine dintr-un loc anume.
+  ui:
+    sari_la_continut: Sari la conținut
+    sari_la_comanda: Sari la comandă
+    meniu: Traseul
+    inchide: Închide
+    cos: Coș
+    cos_gol: Coșul e gol. Adaugă un borcan din oricare peisaj.
+    adauga: Adaugă în coș
+    adaugat: Adăugat
+    gramaj: Gramaj
+    pret_la_cerere: preț la cerere
+    indisponibil: indisponibil momentan
+    limba: Limba
+    derulare: Derulează sau glisează
+    incepe: Începe călătoria
+    sus: Înapoi la stupină
+    miscare_redusa: Mișcare redusă
+    trimite_cererea: Continuă spre cererea de comandă
+    cantitate: Cantitate
+    elimina: Elimină
+    in_curand: în curând
+  scene:
+    deschidere:
+      eticheta: Stupina
+      supratitlu: Miere din România
+      titlu: Fiecare borcan, un loc anume.
+      text: Urmează albina prin livezi în floare, păduri de salcâm, câmpuri sălbatice, păduri de brad și pajiști alpine. Fiecare peisaj are mierea lui.
+    intoarcere:
+      eticheta: Întoarcerea
+  caracteristici:
+    culoare: Culoare
+    aroma: Aromă
+    textura: Textură
+    recoltare: Recoltare
+
+en:
+  nume_limba: English
+  meta:
+    titlu: Apisvania — Romanian honey, following the bee
+    descriere: Follow the bee through blossoming orchards, acacia woods, wildflower meadows, fir forests and alpine heaths. Every jar of Apisvania honey comes from one particular place.
+  ui:
+    sari_la_continut: Skip to content
+    sari_la_comanda: Skip to order
+    meniu: The route
+    inchide: Close
+    cos: Basket
+    cos_gol: Your basket is empty. Add a jar from any landscape.
+    adauga: Add to basket
+    adaugat: Added
+    gramaj: Size
+    pret_la_cerere: price on request
+    indisponibil: currently unavailable
+    limba: Language
+    derulare: Scroll or swipe
+    incepe: Begin the journey
+    sus: Back to the apiary
+    miscare_redusa: Reduced motion
+    trimite_cererea: Continue to order request
+    cantitate: Quantity
+    elimina: Remove
+    in_curand: coming soon
+  scene:
+    deschidere:
+      eticheta: The apiary
+      supratitlu: Honey from Romania
+      titlu: Every jar, one particular place.
+      text: Follow the bee through blossoming orchards, acacia woods, wild meadows, fir forests and alpine heaths. Each landscape has a honey of its own.
+    intoarcere:
+      eticheta: The return
+  caracteristici:
+    culoare: Colour
+    aroma: Aroma
+    textura: Texture
+    recoltare: Harvest

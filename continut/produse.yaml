@@ -1,0 +1,203 @@
+# ─────────────────────────────────────────────────────────────────────
+#  PRODUSELE APISVANIA
+#
+#  Acesta este singurul loc unde se schimbă prețurile, gramajele,
+#  disponibilitatea și descrierile sortimentelor.
+#
+#  Reguli simple:
+#   • Păstrează spațiile de la începutul rândurilor exact cum sunt.
+#   • Textul lung stă după „ro:” / „en:” pe un singur rând.
+#   • Prețul se scrie ca număr, cu punct pentru zecimale: 12.50
+#     Cât timp scrie PRET_DE_COMPLETAT, site-ul afișează „preț la cerere”.
+#   • disponibil: true  → se poate comanda
+#     disponibil: false → apare ca „indisponibil momentan”
+#
+#  Fără afirmații despre sănătate sau efecte medicale: în UE sunt
+#  reglementate strict. Descriem doar culoarea, aroma, textura, locul.
+# ─────────────────────────────────────────────────────────────────────
+
+moneda: EUR
+
+sortimente:
+
+  - id: primavara
+    disponibil: true
+    nume:
+      ro: Miere de primăvară
+      en: Spring Blossom Honey
+    loc:
+      ro: Livezile în floare
+      en: Orchards in bloom
+    descriere:
+      ro: Prima recoltă a anului, culeasă când merii, cireșii și prunii din livezi sunt în floare. Galben-pai și luminoasă, cu o aromă florală delicată și o notă fructată, ca petala de măr. Cristalizează repede, într-o cremă fină, aproape albă.
+      en: The first harvest of the year, gathered while the apple, cherry and plum orchards are in bloom. Straw-gold and bright, with a delicate floral aroma and a fruity note, like an apple petal. It crystallises quickly into a fine, almost white cream.
+    caracteristici:
+      culoare:
+        ro: galben-pai, deschisă
+        en: pale straw gold
+      aroma:
+        ro: florală, fructată, delicată
+        en: floral, fruity, delicate
+      textura:
+        ro: cristalizează fin în câteva săptămâni
+        en: sets into a fine cream within weeks
+      recoltare:
+        ro: aprilie – mai
+        en: April – May
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+
+  - id: salcam
+    disponibil: true
+    nume:
+      ro: Miere de salcâm
+      en: Acacia Honey
+    loc:
+      ro: Pădurea de salcâm
+      en: The acacia woods
+    descriere:
+      ro: Mierea limpede a lunii mai, din ciorchinii albi și parfumați de salcâm. Aproape transparentă, cu reflexe de aur pal și un gust dulce, curat, cu o aromă subtilă de vanilie florală. Rămâne lichidă foarte mult timp.
+      en: The clear honey of May, from the white, fragrant clusters of the acacia tree. Almost transparent, with pale gold reflections and a clean, sweet taste with a subtle floral-vanilla aroma. It stays liquid for a very long time.
+    caracteristici:
+      culoare:
+        ro: aproape transparentă, auriu pal
+        en: near-transparent, pale gold
+      aroma:
+        ro: florală fină, vanilată
+        en: fine, floral, vanilla-like
+      textura:
+        ro: fluidă; cristalizează foarte lent
+        en: runny; crystallises very slowly
+      recoltare:
+        ro: mai
+        en: May
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+
+  - id: poliflora
+    disponibil: true
+    nume:
+      ro: Miere polifloră
+      en: Wildflower Honey
+    loc:
+      ro: Câmpul cu flori sălbatice
+      en: The wildflower meadow
+    descriere:
+      ro: O vară întreagă pe un deal cu flori - trifoi, sulfină, cimbrișor, salvie și sute de alte flori sălbatice. Chihlimbarie, cu o nuanță care se schimbă de la an la an, și un gust plin, complex, ușor ierbos. Cristalizează în timp, într-o textură cremoasă.
+      en: A whole summer on a flowering hillside - clover, sweet clover, wild thyme, sage and hundreds of other wildflowers. Amber, with a shade that changes from year to year, and a full, complex, slightly herbal taste. Over time it sets into a creamy texture.
+    caracteristici:
+      culoare:
+        ro: chihlimbar, variabilă de la an la an
+        en: amber, varying with each year
+      aroma:
+        ro: plină, complexă, ușor ierboasă
+        en: full, complex, lightly herbal
+      textura:
+        ro: cristalizează cremos în timp
+        en: turns creamy over time
+      recoltare:
+        ro: iunie – iulie
+        en: June – July
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 950 g
+        pret: PRET_DE_COMPLETAT
+
+  - id: mana-brad
+    disponibil: true
+    nume:
+      ro: Miere de mană de brad
+      en: Fir Honeydew Honey
+    loc:
+      ro: Pădurea de brad, la munte
+      en: The mountain fir forest
+    descriere:
+      ro: Nu vine din flori, ci din pădurea de brad - albinele culeg picăturile dulci de pe ramuri. Închisă la culoare, aproape neagră, cu reflexe verzui și un gust malțat, rășinos, cu note de caramel ars. Densă; cristalizează foarte lent. Se recoltează doar în anii buni.
+      en: It does not come from flowers but from the fir forest - the bees gather the sweet droplets found on the branches. Dark, almost black, with greenish glints and a malty, resinous taste with notes of burnt caramel. Dense; it crystallises very slowly. Harvested only in good years.
+    caracteristici:
+      culoare:
+        ro: foarte închisă, reflexe verzui
+        en: very dark, greenish glints
+      aroma:
+        ro: rășinoasă, malțată, caramel ars
+        en: resinous, malty, burnt caramel
+      textura:
+        ro: densă; cristalizează foarte lent
+        en: dense; crystallises very slowly
+      recoltare:
+        ro: iulie – august
+        en: July – August
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+
+  - id: zmeura
+    disponibil: true
+    nume:
+      ro: Miere de zmeură
+      en: Raspberry Blossom Honey
+    loc:
+      ro: Liziera cu zmeur sălbatic
+      en: The wild raspberry thickets
+    descriere:
+      ro: Din liziera pădurii de munte, unde zmeurul sălbatic înflorește la începutul verii. Chihlimbar pal, cu o aromă florală-fructată discretă și un final ușor acidulat. Cristalizează fin, într-o cremă catifelată.
+      en: From the edge of the mountain forest, where wild raspberries flower in early summer. Pale amber, with a quiet floral-fruity aroma and a gently tart finish. It crystallises finely into a velvety cream.
+    caracteristici:
+      culoare:
+        ro: chihlimbar pal
+        en: pale amber
+      aroma:
+        ro: florală-fructată, final acidulat
+        en: floral-fruity, gently tart finish
+      textura:
+        ro: cremă catifelată
+        en: velvety cream
+      recoltare:
+        ro: iunie – iulie
+        en: June – July
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+
+  - id: iarba-neagra
+    disponibil: true
+    nume:
+      ro: Miere de iarbă neagră
+      en: Heather Honey
+    loc:
+      ro: Pajiștea alpină
+      en: The alpine heath
+    descriere:
+      ro: Ultima miere a sezonului, din pajiștile alpine acoperite de iarbă neagră (Calluna vulgaris) înflorită în violet. Roșcat-chihlimbarie, cu o aromă puternică, lemnoasă, ușor amăruie. Are o textură neobișnuită, ca un gel, care se fluidizează când o amesteci.
+      en: The last honey of the season, from alpine heaths covered in violet-flowering heather (Calluna vulgaris). Reddish amber, with a strong, woody, slightly bitter aroma. Its texture is unusual - jelly-like, turning fluid when stirred.
+    caracteristici:
+      culoare:
+        ro: roșcat-chihlimbarie, închisă
+        en: deep reddish amber
+      aroma:
+        ro: puternică, lemnoasă, ușor amăruie
+        en: strong, woody, slightly bitter
+      textura:
+        ro: ca un gel; se fluidizează la amestecare
+        en: jelly-like; loosens when stirred
+      recoltare:
+        ro: august – septembrie
+        en: August – September
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT

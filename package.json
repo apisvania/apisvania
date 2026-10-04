@@ -1,0 +1,23 @@
+{
+  "name": "apisvania",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Apisvania — o călătorie imersivă după o albină, prin peisajele fiecărui sortiment de miere.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~5.9",
+    "vite": "^8.3.2",
+    "vite-plugin-singlefile": "^2.3.3",
+    "yaml": "^2.9.1"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-previzualizare
+# Pagini generate automat din continut/ (nu le edita direct)
+/index.html
+/ro/
+/en/
+.vercel
+.DS_Store

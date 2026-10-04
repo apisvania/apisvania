@@ -1,0 +1,7 @@
+{
+  "comentariu": "Ordinea scenelor din călătorie. Fiecare scenă are un peisaj construit în src/lume/scene/. Fragmentul inițial conține doar primele două.",
+  "scene": [
+    { "id": "deschidere", "tip": "deschidere" },
+    { "id": "primavara", "tip": "produs", "produs": "primavara" }
+  ]
+}
