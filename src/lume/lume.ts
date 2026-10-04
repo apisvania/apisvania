@@ -280,7 +280,7 @@ export class Lume {
       const banda = 2.4;
       const sus = sol + banda * 0.42;
       const p = this.drum(zz);
-      const v = r.range(-0.07, 0.07);
+      const v = r.range(-0.012, 0.012);
       this.carti.push({
         tex: variante[Math.floor(r.next() * variante.length)],
         x: p.x + r.range(-8, 8),
@@ -293,7 +293,7 @@ export class Lume {
         u0: r.next(),
         oglinda: r.chance(0.5),
         ceata: 1,
-        nuanta: [1 + v + r.range(-0.03, 0.03), 1 + v, 1 + v * 0.6 + r.range(-0.04, 0.02)],
+        nuanta: [1 + v, 1 + v, 1 + v],
       });
     }
   }

@@ -1,203 +1,122 @@
-// The apiary: painted wooden hives, a rustic fence and wildflower clumps.
+// The apiary in sketch style: line-drawn hives with a flat wash of colour,
+// a rustic fence and small clumps of wildflowers.
 
-import { rng, jitter, shade, mixHex } from '../util';
-import { panza, tulpina, cerc, elipsa, pataMoale } from './panza';
+import { rng } from '../util';
+import { panza, linie, spalare, CERNEALA } from './panza';
 import { floareMica, type Floare } from './teren';
 
-export const CULORI_STUPI = ['#3d6b8a', '#d4a03a', '#6e8e4f', '#e6dfcd', '#b4573d', '#5b8fa0'];
+export const CULORI_STUPI = ['#8fb0c4', '#e3b866', '#a9bb8c', '#e9e2d0', '#d39a83'];
 
-/** One hive in three-quarter view. Texture is 256×256; the hive sits on the bottom edge. */
-export function stup(seed: number, culoare: string, soareStanga = true, W = 256, H = 256) {
+/** One hive in three-quarter view, 256×256, standing on the bottom edge. */
+export function stup(seed: number, culoare: string, W = 256, H = 256) {
   const { c, g } = panza(W, H);
   const r = rng(seed);
   const k = W / 256;
-  const fata = { x0: 58 * k, x1: 168 * k, y0: 92 * k, y1: 206 * k };
-  const adanc = 46 * k;
-  const urcare = 16 * k;
-  const lumFata = soareStanga ? 0.1 : -0.12;
-  const lumLat = soareStanga ? -0.28 : 0.05;
+  const x0 = 62 * k;
+  const x1 = 166 * k;
+  const y0 = 96 * k;
+  const y1 = 206 * k;
+  const ad = 42 * k;
+  const urc = 15 * k;
+  const t = (n: number) => n + r.range(-1.2, 1.2) * k;
 
-  g.save();
-  g.translate(W / 2, 250 * k);
-  g.scale(1, 0.16);
-  pataMoale(g, 0, 0, 120 * k, 'rgba(25,30,20,0.45)', 'rgba(25,30,20,0)');
-  g.restore();
+  const fata = new Path2D();
+  fata.rect(x0, y0, x1 - x0, y1 - y0);
+  const lat = new Path2D();
+  lat.moveTo(x1, y0);
+  lat.lineTo(x1 + ad, y0 - urc);
+  lat.lineTo(x1 + ad, y1 - urc);
+  lat.lineTo(x1, y1);
+  lat.closePath();
+  const acoperis = new Path2D();
+  acoperis.moveTo(x0 - 8 * k, y0);
+  acoperis.lineTo(x1 + 6 * k, y0);
+  acoperis.lineTo(x1 + ad + 8 * k, y0 - urc - 6 * k);
+  acoperis.lineTo(x0 + ad - 6 * k, y0 - urc - 6 * k);
+  acoperis.closePath();
 
-  // Stand.
-  g.fillStyle = '#6b5a48';
-  g.fillRect(fata.x0 + 8 * k, fata.y1, 14 * k, 40 * k);
-  g.fillRect(fata.x1 - 22 * k, fata.y1, 14 * k, 40 * k);
-  g.fillStyle = '#4c4034';
-  g.fillRect(fata.x1 + 18 * k, fata.y1 - 10 * k, 12 * k, 44 * k);
+  g.fillStyle = '#fbf8f2';
+  g.fill(fata);
+  g.fill(lat);
+  spalare(g, fata, culoare, 0.85, 4 * k, 2 * k);
+  spalare(g, lat, culoare, 1, 2 * k, 1 * k);
+  spalare(g, lat, '#7d6f62', 0.25, 0, 0);
+  spalare(g, acoperis, '#b7b2a8', 0.7, 2 * k, 1 * k);
 
-  // Side face (parallelogram).
-  g.fillStyle = shade(culoare, lumLat);
-  g.beginPath();
-  g.moveTo(fata.x1, fata.y0);
-  g.lineTo(fata.x1 + adanc, fata.y0 - urcare);
-  g.lineTo(fata.x1 + adanc, fata.y1 - urcare);
-  g.lineTo(fata.x1, fata.y1);
-  g.fill();
-  // Front face.
-  const gr = g.createLinearGradient(0, fata.y0, 0, fata.y1);
-  gr.addColorStop(0, shade(culoare, lumFata + 0.06));
-  gr.addColorStop(1, shade(culoare, lumFata - 0.12));
-  g.fillStyle = gr;
-  g.fillRect(fata.x0, fata.y0, fata.x1 - fata.x0, fata.y1 - fata.y0);
-  // Planks and wear.
-  for (let x = fata.x0 + 14 * k; x < fata.x1; x += r.range(18, 26) * k) {
-    g.fillStyle = 'rgba(0,0,0,0.07)';
-    g.fillRect(x, fata.y0, 1.2 * k, fata.y1 - fata.y0);
+  const w = 2 * k;
+  linie(g, [[x0, t(y0)], [x0, t(y1)], [x1, y1], [x1, y0], [x0, y0]], w, 0.8, 0.8, seed);
+  linie(g, [[x1, y0], [x1 + ad, y0 - urc], [x1 + ad, y1 - urc], [x1, y1]], w * 0.9, 0.7, 0.8, seed + 1);
+  linie(g, [[x0 - 8 * k, y0], [x1 + 6 * k, y0], [x1 + ad + 8 * k, y0 - urc - 6 * k], [x0 + ad - 6 * k, y0 - urc - 6 * k], [x0 - 8 * k, y0]], w, 0.75, 0.8, seed + 2);
+  // Seam between the two boxes, entrance and landing board.
+  const mij = (y0 + y1) / 2;
+  linie(g, [[x0, mij], [x1, mij], [x1 + ad, mij - urc]], w * 0.7, 0.45, 0.6, seed + 3);
+  linie(g, [[x0 + 20 * k, y1 - 8 * k], [x0 + 80 * k, y1 - 8 * k]], 3 * k, 0.85, 0.4, seed + 4);
+  linie(g, [[x0 - 4 * k, y1 + 7 * k], [x1 - 14 * k, y1 + 7 * k]], w * 0.8, 0.6, 0.6, seed + 5);
+  // Legs.
+  linie(g, [[x0 + 12 * k, y1], [x0 + 12 * k, 246 * k]], w, 0.65, 0.5, seed + 6);
+  linie(g, [[x1 - 12 * k, y1], [x1 - 12 * k, 246 * k]], w, 0.65, 0.5, seed + 7);
+  linie(g, [[x1 + ad - 6 * k, y1 - urc], [x1 + ad - 6 * k, 236 * k]], w * 0.8, 0.5, 0.5, seed + 8);
+  // Hatching on the shaded side.
+  g.strokeStyle = CERNEALA;
+  g.globalAlpha = 0.18;
+  g.lineWidth = 1.1 * k;
+  for (let i = 0; i < 6; i++) {
+    const x = x1 + 6 * k + i * 6 * k;
+    g.beginPath();
+    g.moveTo(x, y0 - i * 2 * k + 6 * k);
+    g.lineTo(x, y1 - i * 2 * k - 8 * k);
+    g.stroke();
   }
-  for (let i = 0; i < 60; i++) {
-    g.fillStyle = r.chance(0.5) ? 'rgba(255,255,255,0.08)' : 'rgba(40,25,10,0.08)';
-    g.fillRect(r.range(fata.x0, fata.x1), r.range(fata.y0, fata.y1), r.range(4, 14) * k, r.range(1, 2) * k);
-  }
-  // Two boxes: seam and handholds.
-  const seam = (fata.y0 + fata.y1) / 2 - 4 * k;
-  g.fillStyle = 'rgba(0,0,0,0.25)';
-  g.fillRect(fata.x0, seam, fata.x1 - fata.x0, 2.5 * k);
-  g.beginPath();
-  g.moveTo(fata.x1, seam);
-  g.lineTo(fata.x1 + adanc, seam - urcare);
-  g.lineTo(fata.x1 + adanc, seam - urcare + 2.5 * k);
-  g.lineTo(fata.x1, seam + 2.5 * k);
-  g.fill();
-  g.fillStyle = 'rgba(0,0,0,0.3)';
-  for (const y of [fata.y0 + 20 * k, seam + 22 * k]) {
-    elipsa(g, fata.x1 + adanc * 0.5, y - urcare * 0.5, 10 * k, 3 * k, -0.33);
-  }
-  // Entrance and landing board.
-  g.fillStyle = '#1a140f';
-  g.fillRect(fata.x0 + 18 * k, fata.y1 - 9 * k, 70 * k, 6 * k);
-  g.fillStyle = shade('#8a6b4a', soareStanga ? 0.1 : -0.05);
-  g.beginPath();
-  g.moveTo(fata.x0 + 8 * k, fata.y1 - 2 * k);
-  g.lineTo(fata.x1 - 6 * k, fata.y1 - 2 * k);
-  g.lineTo(fata.x1 - 18 * k, fata.y1 + 9 * k);
-  g.lineTo(fata.x0 - 4 * k, fata.y1 + 9 * k);
-  g.fill();
-
-  // Roof: front overhang and top.
-  const acoperis = r.chance(0.5) ? '#8d8f8c' : shade(culoare, -0.35);
-  g.fillStyle = shade(acoperis, 0.25);
-  g.beginPath();
-  g.moveTo(fata.x0 - 8 * k, fata.y0 - 2 * k);
-  g.lineTo(fata.x1 + 6 * k, fata.y0 - 2 * k);
-  g.lineTo(fata.x1 + adanc + 8 * k, fata.y0 - urcare - 6 * k);
-  g.lineTo(fata.x0 + adanc - 6 * k, fata.y0 - urcare - 6 * k);
-  g.fill();
-  g.fillStyle = acoperis;
-  g.fillRect(fata.x0 - 8 * k, fata.y0 - 2 * k, fata.x1 - fata.x0 + 14 * k, 12 * k);
-  g.fillStyle = shade(acoperis, -0.3);
-  g.beginPath();
-  g.moveTo(fata.x1 + 6 * k, fata.y0 - 2 * k);
-  g.lineTo(fata.x1 + adanc + 8 * k, fata.y0 - urcare - 6 * k);
-  g.lineTo(fata.x1 + adanc + 8 * k, fata.y0 - urcare + 4 * k);
-  g.lineTo(fata.x1 + 6 * k, fata.y0 + 10 * k);
-  g.fill();
-  // A brick on the roof, as beekeepers do.
-  if (r.chance(0.6)) {
-    g.fillStyle = '#9b5a3c';
-    g.fillRect(fata.x0 + 40 * k, fata.y0 - 16 * k, 34 * k, 12 * k);
-    g.fillStyle = '#7a432d';
-    g.fillRect(fata.x0 + 40 * k, fata.y0 - 6 * k, 34 * k, 2 * k);
-  }
-  // Grass tufts in front of the stand.
-  for (let i = 0; i < 70; i++) {
-    const x = r.range(20, 236) * k;
-    g.fillStyle = jitter('#56722f', r, 0.12, 0.95);
-    tulpina(g, x, 252 * k, x + r.range(-6, 6) * k, (252 - r.range(8, 26)) * k, 3 * k, 0.4);
-  }
+  g.globalAlpha = 1;
+  linie(g, [[20 * k, 247 * k], [236 * k, 246 * k]], 1.2 * k, 0.3, 0.6, seed + 9);
   return c;
 }
 
-/** A tileable split-rail wooden fence (1024×256). */
+/** A tileable split-rail fence (1024×256). */
 export function gard(seed: number, W = 1024, H = 256) {
   const { c, g } = panza(W, H);
   const r = rng(seed);
-  const lemn = '#7d6b58';
-  for (const y of [H * 0.42, H * 0.66]) {
-    g.fillStyle = shade(lemn, -0.12);
-    g.fillRect(0, y, W, 12);
-    g.fillStyle = shade(lemn, 0.12);
-    g.fillRect(0, y, W, 4);
-  }
+  for (const y of [H * 0.45, H * 0.68]) linie(g, [[0, y], [W, y + r.range(-3, 3)]], 2.6, 0.55, 1.2, y);
   for (let x = 32; x < W; x += 128) {
     const xx = x + r.range(-6, 6);
-    g.fillStyle = shade(lemn, -0.05);
-    g.beginPath();
-    g.moveTo(xx - 9, H);
-    g.lineTo(xx - 8, H * 0.28);
-    g.lineTo(xx, H * 0.22);
-    g.lineTo(xx + 8, H * 0.28);
-    g.lineTo(xx + 9, H);
-    g.fill();
-    g.fillStyle = shade(lemn, 0.2, 0.7);
-    g.fillRect(xx - 7, H * 0.28, 4, H * 0.72);
-  }
-  for (let i = 0; i < 260; i++) {
-    const x = r.range(0, W);
-    g.fillStyle = jitter('#56722f', r, 0.12, 0.95);
-    tulpina(g, x, H, x + r.range(-8, 8), H - r.range(10, 50), 3, 0.4);
+    linie(g, [[xx, H], [xx + r.range(-3, 3), H * 0.26]], 3, 0.65, 0.8, x);
   }
   return c;
 }
 
-/** A clump of spring wildflowers (512×256), base on the bottom edge. */
+/** A small clump of wildflowers (512×256), base on the bottom edge. */
 export function tufaFlori(seed: number, flori: Floare[], W = 512, H = 256) {
   const { c, g } = panza(W, H);
   const r = rng(seed);
-  g.save();
-  g.translate(W / 2, H * 0.97);
-  g.scale(1, 0.18);
-  pataMoale(g, 0, 0, W * 0.45, 'rgba(25,35,15,0.3)', 'rgba(25,35,15,0)');
-  g.restore();
-  // Leaves and grass.
-  for (let i = 0; i < 220; i++) {
-    const x = W / 2 + r.gauss() * W * 0.16;
-    const h = r.range(0.2, 0.55) * H;
-    g.fillStyle = jitter(r.pick(['#5d7d34', '#4c6a2b', '#7a9a42']), r, 0.1, 0.95);
-    tulpina(g, x, H, x + r.range(-0.4, 0.4) * h, H - h, r.range(4, 8), 0.6);
+  g.strokeStyle = CERNEALA;
+  g.lineCap = 'round';
+  // A few blades.
+  for (let i = 0; i < 16; i++) {
+    const x = W / 2 + r.gauss() * W * 0.12;
+    const h = r.range(0.2, 0.5) * H;
+    g.globalAlpha = 0.4;
+    g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(x, H);
+    g.quadraticCurveTo(x, H - h * 0.6, x + r.range(-0.3, 0.3) * h, H - h);
+    g.stroke();
   }
-  // Flowers on stems.
   for (const f of flori) {
-    const n = Math.round(f.densitate * 14);
+    const n = Math.max(1, Math.round(f.densitate * 4));
     for (let i = 0; i < n; i++) {
-      const x = W / 2 + r.gauss() * W * 0.14;
-      const h = r.range(0.4, 0.92) * H;
-      const lean = r.range(-0.15, 0.15) * h;
-      g.fillStyle = jitter('#56783a', r, 0.08);
-      tulpina(g, x, H, x + lean, H - h, 4, 2.4);
-      const m = f.marime * 3.2 * r.range(0.8, 1.2);
-      floareMica(g, x + lean, H - h, f, m, r);
-      g.fillStyle = mixHex('#ffffff', '#ffffff', 0, 0.25);
-      cerc(g, x + lean - m * 0.15, H - h - m * 0.2, m * 0.18);
+      const x = W / 2 + r.gauss() * W * 0.12;
+      const h = r.range(0.45, 0.9) * H;
+      const lean = r.range(-0.12, 0.12) * h;
+      g.globalAlpha = 0.5;
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(x, H);
+      g.quadraticCurveTo(x, H - h * 0.5, x + lean, H - h);
+      g.stroke();
+      g.globalAlpha = 1;
+      floareMica(g, x + lean, H - h, f.culoare, r.range(9, 13));
     }
   }
-  return c;
-}
-
-/** A low, wide carpet of flowers (1024×256) — reads as a coloured patch on the hills from above. */
-export function covorFlori(seed: number, flori: Floare[], iarba = '#5f8232', W = 1024, H = 256) {
-  const { c, g } = panza(W, H);
-  const r = rng(seed);
-  // Irregular blob outline so the patch has no visible rectangle.
-  const forma = (x: number) => 0.25 + 0.75 * Math.sin(Math.PI * (x / W)) ** 0.6;
-  for (let i = 0; i < 900; i++) {
-    const x = r.range(0, W);
-    const h = r.range(0.25, 0.75) * H * forma(x);
-    g.fillStyle = jitter(iarba, r, 0.14, 0.9);
-    tulpina(g, x, H, x + r.range(-0.3, 0.3) * h, H - h, r.range(3, 6), 0.5);
-  }
-  for (let i = 0; i < 420; i++) {
-    const x = r.range(W * 0.04, W * 0.96);
-    const f = flori[Math.floor(r.next() ** 1.4 * flori.length)];
-    const h = r.range(0.2, 0.85) * H * forma(x);
-    const m = f.marime * r.range(1.6, 2.6);
-    g.fillStyle = jitter('#56783a', r, 0.08);
-    tulpina(g, x, H, x + r.range(-6, 6), H - h, 2.5, 1.5);
-    floareMica(g, x, H - h, f, m, r);
-  }
+  g.globalAlpha = 1;
   return c;
 }

@@ -201,7 +201,7 @@ export function paginaLimba(continut, limba) {
     <meta name="description" content="${esc(t.meta.descriere)}">
     <link rel="canonical" href="${urlLimba(texte, limba)}">
     ${alternate(texte)}
-    <meta name="theme-color" content="#1b2420">
+    <meta name="theme-color" content="#f3ede1">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Apisvania">

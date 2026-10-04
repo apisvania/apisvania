@@ -5,7 +5,7 @@ import type { Mediu, Carte } from '../randare';
 import type { ContextScena } from '../lume';
 import { hex } from '../util';
 import { deal, fasie, type OptFasie, type Floare } from '../pictura/teren';
-import { covorFlori, tufaFlori } from '../pictura/stupina';
+import { tufaFlori } from '../pictura/stupina';
 import { pom, PALETE } from '../pictura/copaci';
 
 export interface MediuHex {
@@ -52,8 +52,9 @@ export function biom(ctx: ContextScena, nume: string, o: Omit<OptFasie, 'seed'>,
 export interface OptStratOrizont {
   cheie: string;
   seed: number;
-  sus: string;
-  jos: string;
+  /** Paper colour of the ground and watercolour tint under the ridge. */
+  sol: string;
+  spalare: string;
   /** Height of the ridge band in metres and where the ridge sits (world y of the band top). */
   banda: number;
   varf: number;
@@ -74,8 +75,9 @@ export function stratOrizont(ctx: ContextScena, o: OptStratOrizont): Carte {
         seed: o.seed,
         w: 2048,
         h: 512,
-        sus: o.sus,
-        jos: o.jos,
+        sol: o.sol,
+        spalare: o.spalare,
+        cerneala: 0.32,
         creasta: o.creasta ?? 0.35,
         amplitudine: o.amplitudine ?? 0.3,
         frecventa: o.frecventa ?? 5,
@@ -97,31 +99,22 @@ export function stratOrizont(ctx: ContextScena, o: OptStratOrizont): Carte {
 }
 
 /**
- * The flowering hills the bee crosses between two scenes: carpets of flowers
- * visible from above, clumps along the flight path and a few lone trees.
+ * The flowering hills the bee crosses between two scenes: a few clumps of
+ * flowers along the flight path and the odd lone tree, with lots of air.
  */
-export function dealuriInflorite(ctx: ContextScena, nume: string, zDe: number, zLa: number, flori: Floare[], iarba: string) {
+export function dealuriInflorite(ctx: ContextScena, nume: string, zDe: number, zLa: number, flori: Floare[]) {
   const { r, sol } = ctx;
-  const covoare = [0, 1, 2].map((i) => ctx.tex(`covor-${nume}-${i}`, () => covorFlori(900 + i * 13 + nume.length, flori, iarba)));
   const tufe = [0, 1].map((i) => ctx.tex(`tufa-drum-${nume}-${i}`, () => tufaFlori(950 + i * 7 + nume.length, flori)));
-  const copaci = [0, 1].map((i) => ctx.tex(`copac-drum-${nume}-${i}`, () => pom({ seed: 970 + i, paleta: PALETE.tei, soareStanga: true })));
-  for (let z = zDe; z < zLa; z += r.range(2.5, 5)) {
+  const copaci = [0, 1].map((i) => ctx.tex(`copac-drum-${nume}-${i}`, () => pom({ seed: 970 + i, paleta: PALETE.tei })));
+  for (let z = zDe; z < zLa; z += r.range(7, 14)) {
     const p = ctx.drum(z);
-    // Carpets spread wide so they are seen from cruise altitude.
-    for (let k = 0; k < 2; k++) {
-      const x = p.x + r.gauss() * 26;
-      const w = r.range(7, 16);
-      ctx.adauga({ tex: r.pick(covoare), x, y: sol(z) - 0.2, z: z + r.range(-1, 1), w, h: w * 0.12, leganare: 0.05, faza: r.range(0, 6), oglinda: r.chance(0.5) });
-    }
-    if (r.chance(0.55)) {
-      const x = p.x + r.range(-9, 9);
-      const m = r.range(0.9, 1.5);
-      ctx.adauga({ tex: r.pick(tufe), x, y: sol(z) - 0.05, z, w: 1.6 * m, h: 0.8 * m, leganare: 0.06, faza: r.range(0, 6) });
-    }
-    if (r.chance(0.12)) {
-      const x = p.x + (r.chance(0.5) ? -1 : 1) * r.range(12, 50);
-      const m = r.range(0.8, 1.3);
-      if (ctx.liber(x, z, 4, 8)) ctx.adauga({ tex: r.pick(copaci), x, y: sol(z) - 0.2, z, w: 8 * m, h: 8 * m, leganare: 0.12, faza: r.range(0, 6) });
+    const x = p.x + r.range(-12, 12);
+    const m = r.range(1, 1.6);
+    ctx.adauga({ tex: r.pick(tufe), x, y: sol(z) - 0.05, z, w: 1.6 * m, h: 0.8 * m, leganare: 0.05, faza: r.range(0, 6) });
+    if (r.chance(0.18)) {
+      const xt = p.x + (r.chance(0.5) ? -1 : 1) * r.range(14, 50);
+      const mt = r.range(0.8, 1.3);
+      if (ctx.liber(xt, z, 4, 8)) ctx.adauga({ tex: r.pick(copaci), x: xt, y: sol(z) - 0.2, z, w: 8 * mt, h: 8 * mt, leganare: 0.1, faza: r.range(0, 6) });
     }
   }
 }

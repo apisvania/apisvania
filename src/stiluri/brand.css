@@ -22,7 +22,9 @@
 
   --raza: 3px;
   --umbra: 0 1px 1px rgba(20, 16, 10, 0.04), 0 12px 40px -12px rgba(20, 16, 10, 0.35);
-  --sticla: rgba(27, 36, 32, 0.42);
-  --sticla-margine: rgba(246, 240, 228, 0.22);
+  /* The sketch world is paper; controls float on it as light chips. */
+  --lume-hartie: #f3ede1;
+  --sticla: rgba(251, 248, 242, 0.78);
+  --sticla-margine: rgba(61, 53, 46, 0.16);
   --usor: cubic-bezier(0.22, 1, 0.36, 1);
 }

@@ -9,7 +9,7 @@ html {
 }
 body {
   margin: 0;
-  background: var(--brad);
+  background: var(--lume-hartie);
   color: var(--cerneala);
   font: 400 16px/1.6 var(--font-text);
   font-feature-settings: 'ss01', 'cv11';
@@ -83,17 +83,17 @@ button {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(15, 12, 8, 0.32) 100%),
+    radial-gradient(120% 90% at 50% 45%, transparent 60%, rgba(90, 70, 45, 0.16) 100%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .4 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: auto, 220px 220px;
-  mix-blend-mode: soft-light;
-  opacity: 0.45;
+  mix-blend-mode: multiply;
+  opacity: 0.35;
 }
 .lume-voal {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: var(--brad);
+  background: var(--lume-hartie);
   opacity: 1;
   pointer-events: none;
   transition: opacity 1.4s ease;
@@ -102,7 +102,7 @@ button {
   opacity: 0;
 }
 .fara-webgl .lume {
-  background: linear-gradient(#2a3557, #8a7ea3 45%, #f4b98c 70%, #4b6338 71%, #2d3f26);
+  background: linear-gradient(#d5d8e0, #e7dfd8 45%, #f1dbc6 62%, #e9e6d3 63%);
 }
 
 /* ── Top bar ──────────────────────────────────────────────────────── */
@@ -126,20 +126,18 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--hartie);
+  color: var(--cerneala);
   text-decoration: none;
   font-family: var(--font-titlu);
   font-weight: 560;
   font-size: 15px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
 }
 .bara-sigla .marca {
   width: 30px;
   height: 30px;
-  color: var(--miere-deschis);
-  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.3));
+  color: var(--miere);
 }
 .bara-dreapta {
   display: flex;
@@ -156,7 +154,7 @@ button {
   -webkit-backdrop-filter: blur(10px);
 }
 .bara-limbi a {
-  color: var(--ceara);
+  color: var(--cerneala);
   text-decoration: none;
   font-size: 12px;
   font-weight: 600;
@@ -167,8 +165,8 @@ button {
   text-align: center;
 }
 .bara-limbi a[aria-current='true'] {
-  background: var(--ceara);
-  color: var(--cerneala);
+  background: var(--cerneala);
+  color: var(--hartie);
 }
 .bara-buton {
   position: relative;
@@ -180,7 +178,7 @@ button {
   border-radius: 999px;
   background: var(--sticla);
   border: 1px solid var(--sticla-margine);
-  color: var(--ceara);
+  color: var(--cerneala);
   font-size: 13px;
   font-weight: 550;
   letter-spacing: 0.02em;
@@ -189,7 +187,7 @@ button {
   transition: background 0.2s;
 }
 .bara-buton:hover {
-  background: rgba(27, 36, 32, 0.62);
+  background: var(--hartie);
 }
 .bara-buton-icon {
   width: 16px;
@@ -416,23 +414,24 @@ button {
 }
 .harta-drum {
   fill: none;
-  stroke: rgba(246, 240, 228, 0.55);
+  stroke: rgba(61, 53, 46, 0.45);
   stroke-width: 1;
   stroke-dasharray: 2 3;
 }
 .harta-nod {
-  fill: rgba(27, 36, 32, 0.5);
-  stroke: rgba(246, 240, 228, 0.8);
+  fill: var(--hartie);
+  stroke: rgba(61, 53, 46, 0.7);
   stroke-width: 1;
   transition: fill 0.3s;
 }
 .harta-nod.activ {
-  fill: var(--miere-deschis);
-  stroke: var(--miere-deschis);
+  fill: var(--miere);
+  stroke: var(--cerneala);
 }
 .harta-albina {
-  fill: var(--miere-deschis);
-  filter: drop-shadow(0 0 4px rgba(242, 198, 109, 0.9));
+  fill: var(--miere);
+  stroke: var(--cerneala);
+  stroke-width: 1;
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────── */
@@ -469,15 +468,13 @@ button {
   color: var(--ceara);
 }
 .buton-contur {
-  color: var(--hartie);
-  border: 1px solid rgba(251, 248, 242, 0.7);
-  background: rgba(27, 36, 32, 0.15);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  color: var(--cerneala);
+  border: 1.5px solid var(--cerneala);
+  background: transparent;
 }
 .buton-contur:hover {
-  background: var(--hartie);
-  color: var(--cerneala);
+  background: var(--cerneala);
+  color: var(--hartie);
 }
 
 /* ── Scenes: plain document without JS, fixed overlays in the journey ── */
@@ -492,8 +489,7 @@ button {
   align-items: center;
 }
 .scena-deschidere {
-  background: linear-gradient(#24305a, #7e6f99 60%, #f0b48a);
-  color: var(--hartie);
+  background: linear-gradient(#d5d8e0, #f1dbc6);
 }
 .scena-produs {
   background: var(--ceara);
@@ -522,7 +518,7 @@ button {
 /* Opening */
 .deschidere {
   max-width: 600px;
-  color: var(--hartie);
+  color: var(--cerneala);
 }
 .calatorie-activa .deschidere {
   position: absolute;
@@ -534,7 +530,7 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(95deg, rgba(18, 22, 40, 0.5), rgba(18, 22, 40, 0.18) 45%, transparent 65%);
+  background: linear-gradient(95deg, rgba(243, 237, 225, 0.85), rgba(243, 237, 225, 0.45) 45%, transparent 65%);
 }
 .sigla-mare {
   display: flex;
@@ -550,14 +546,14 @@ button {
 .sigla-mare .marca {
   width: 52px;
   height: 52px;
-  color: var(--miere-deschis);
+  color: var(--miere);
 }
 .supratitlu {
   font-size: 12px;
   font-weight: 650;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--miere-deschis);
+  color: var(--miere-inchis);
   margin-bottom: 14px;
 }
 .titlu-mare {
@@ -566,13 +562,12 @@ button {
   font-weight: 330;
   margin-bottom: 22px;
   text-wrap: balance;
-  text-shadow: 0 2px 30px rgba(10, 10, 30, 0.25);
 }
 .deschidere-text {
   font-size: clamp(16px, 1.25vw, 19px);
   line-height: 1.6;
   max-width: 34em;
-  color: rgba(251, 248, 242, 0.88);
+  color: var(--cerneala-2);
   margin-bottom: 30px;
 }
 .indiciu-derulare {
@@ -585,7 +580,7 @@ button {
   margin-top: 46px;
   font-size: 13px;
   letter-spacing: 0.06em;
-  color: rgba(251, 248, 242, 0.75);
+  color: var(--cerneala-2);
   transition: opacity 0.8s;
 }
 .indiciu-derulare.ascuns {
@@ -594,7 +589,7 @@ button {
 .indiciu-roata {
   width: 20px;
   height: 30px;
-  border: 1.5px solid rgba(251, 248, 242, 0.75);
+  border: 1.5px solid var(--cerneala-2);
   border-radius: 10px;
   position: relative;
 }
@@ -607,7 +602,7 @@ button {
   height: 6px;
   margin-left: -1.5px;
   border-radius: 2px;
-  background: var(--miere-deschis);
+  background: var(--miere);
   animation: roata 1.8s ease-in-out infinite;
 }
 @keyframes roata {
@@ -620,13 +615,11 @@ button {
 /* Product panel */
 .panou {
   max-width: 460px;
-  background: rgba(251, 248, 242, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(251, 248, 242, 0.94);
+  border: 1px solid rgba(61, 53, 46, 0.14);
   border-radius: var(--raza);
   padding: clamp(24px, 2.6vw, 38px);
-  box-shadow: var(--umbra);
-  backdrop-filter: blur(16px) saturate(1.15);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: 0 18px 40px -24px rgba(60, 45, 30, 0.35);
 }
 .calatorie-activa .panou {
   position: absolute;
@@ -775,7 +768,7 @@ button {
     transform: translateY(calc((1 - var(--vizibil, 0)) * 30px));
   }
   .calatorie-activa .scena-deschidere::before {
-    background: linear-gradient(0deg, rgba(18, 22, 40, 0.62), rgba(18, 22, 40, 0.25) 50%, transparent 70%);
+    background: linear-gradient(0deg, rgba(243, 237, 225, 0.92), rgba(243, 237, 225, 0.55) 50%, transparent 72%);
   }
   .sigla-mare {
     margin-bottom: 18px;
