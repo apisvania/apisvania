@@ -130,10 +130,21 @@ export function adaugaErou(
 ) {
   const { sol, tinta } = ctx;
   const { w, h } = o.marime;
-  let erou: Erou | null = null;
-  const obtine = () => (erou ??= o.erou());
-  const tErou = ctx.tex('erou', () => obtine().canvas);
-  const ancora = () => erou?.ancora ?? { u: 0.31, v: 0.42 };
+  // Only the layout (landing point, stems) is kept between paintings. The
+  // canvas itself is released after upload, so a texture freed when the bee
+  // flies far away is painted afresh on the next loop.
+  let forma: Pick<Erou, 'ancora' | 'tulpini'> | null = null;
+  const picteaza = () => {
+    const e = o.erou();
+    forma = { ancora: e.ancora, tulpini: e.tulpini };
+    return e.canvas;
+  };
+  const obtine = () => {
+    if (!forma) picteaza().width = 0;
+    return forma!;
+  };
+  const tErou = ctx.tex('erou', picteaza);
+  const ancora = () => forma?.ancora ?? { u: 0.31, v: 0.42 };
   const centruX = () => tinta.x + (0.5 - ancora().u) * w;
   const jos = () => tinta.y - (1 - ancora().v) * h;
   const solZ = sol(tinta.z);

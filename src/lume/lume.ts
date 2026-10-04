@@ -344,6 +344,8 @@ export class Lume {
       const e = this.coada.shift()!;
       if (e.t) continue;
       const pz = e.pictura();
+      // A released (0×0) canvas would upload as a black square: skip it.
+      if (!pz.width || !pz.height) continue;
       e.t = this.randare.incarcaTextura(pz, e.repetare);
       pz.width = pz.height = 0;
       if (e.repetare && e.cheie.includes('/fasie-') && distCirc(e.scena, scena, this.N) === 0) this.fasieRezerva = e.t;
