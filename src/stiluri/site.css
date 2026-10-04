@@ -838,3 +838,195 @@ button {
 .stil-japonez {
   --lume-hartie: #f1e8d4;
 }
+
+/* ── The return: story, how we work, order request, contact ─────────── */
+.calatorie-activa .panou-mare {
+  width: min(560px, 46vw);
+  max-height: min(78vh, 760px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+}
+.panou-subtitlu {
+  font-family: var(--font-titlu);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 22px;
+  font-weight: 420;
+  margin: 26px 0 10px;
+}
+.pasi {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  counter-reset: pas;
+}
+.pasi li {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  column-gap: 10px;
+  counter-increment: pas;
+}
+.pasi li::before {
+  content: counter(pas);
+  grid-row: span 2;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--miere);
+  color: var(--miere-inchis);
+  font-size: 13px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.pasi strong {
+  font-weight: 650;
+}
+.pasi span {
+  color: var(--cerneala-2);
+  font-size: 14.5px;
+}
+.rezumat {
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+  background: rgba(212, 147, 42, 0.08);
+  border: 1px solid rgba(212, 147, 42, 0.3);
+  border-radius: var(--raza);
+  font-size: 14.5px;
+}
+.rezumat ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.rezumat li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.rezumat li span:last-child {
+  color: var(--cerneala-2);
+  white-space: nowrap;
+}
+.rezumat-total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(34, 29, 25, 0.12);
+  font-weight: 600;
+}
+.rezumat-gol {
+  color: var(--cerneala-2);
+}
+.formular {
+  display: grid;
+  gap: 12px;
+}
+.camp-rand {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.camp {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.camp > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cerneala-2);
+}
+.camp abbr {
+  text-decoration: none;
+  color: var(--miere-inchis);
+}
+.camp input,
+.camp textarea {
+  font: inherit;
+  font-size: 15px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(34, 29, 25, 0.22);
+  border-radius: var(--raza);
+  background: var(--hartie);
+  color: var(--cerneala);
+}
+.camp textarea {
+  resize: vertical;
+}
+.camp input:focus-visible,
+.camp textarea:focus-visible {
+  outline: 2px solid var(--miere);
+  outline-offset: 1px;
+}
+.formular.verificat :invalid {
+  border-color: var(--zmeura);
+}
+.acord {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--cerneala-2);
+}
+.acord input {
+  margin-top: 3px;
+  accent-color: var(--miere-inchis);
+}
+.formular-stare:empty {
+  display: none;
+}
+.formular-stare.eroare {
+  color: var(--zmeura);
+  font-size: 14px;
+}
+.formular-succes {
+  padding: 14px 16px;
+  border-left: 3px solid var(--miere);
+  background: rgba(212, 147, 42, 0.08);
+}
+.formular-succes .panou-subtitlu {
+  margin: 0 0 4px;
+}
+.contact {
+  font-style: normal;
+  display: grid;
+  gap: 4px;
+  font-size: 15px;
+}
+.contact a {
+  color: var(--miere-inchis);
+  font-weight: 600;
+}
+.cos-continua {
+  width: 100%;
+  margin-top: 18px;
+}
+
+/* At night the header sits on a dark sky. */
+.noapte .bara-sigla {
+  color: var(--hartie);
+}
+.noapte .harta-drum {
+  stroke: rgba(246, 240, 228, 0.55);
+}
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1000px) {
+  .calatorie-activa .panou-mare {
+    width: auto;
+    max-height: 70vh;
+  }
+  .camp-rand {
+    grid-template-columns: 1fr;
+  }
+}
+.panou-mare .panou-text {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}

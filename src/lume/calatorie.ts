@@ -52,7 +52,7 @@ export class Calatorie {
   constructor(
     private canvasLume: HTMLCanvasElement,
     private canvasAlbina: HTMLCanvasElement,
-    esteBlocata: (el: EventTarget | null) => boolean,
+    esteBlocata: (el: EventTarget | null, dy?: number) => boolean,
   ) {
     const scene = sceneDinTraseu();
     this.N = scene.length;

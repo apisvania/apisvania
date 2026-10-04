@@ -54,6 +54,14 @@ function jsonLd(continut, limba) {
     url: texte.domeniu,
     logo: `${texte.domeniu}/brand/apisvania-marca.svg`,
     description: t.meta.descriere,
+    email: texte.contact.email,
+    telephone: texte.contact.telefon_link,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: texte.contact.localitate,
+      addressRegion: texte.contact.judet,
+      addressCountry: texte.contact.tara,
+    },
   };
   const produseLd = produse.sortimente.map((p) => {
     const ld = {
@@ -153,6 +161,53 @@ function sectiuneDeschidere(index, continut, limba) {
       </section>`;
 }
 
+function sectiuneIntoarcere(index, continut, limba) {
+  const t = continut.texte[limba];
+  const s = t.scene.intoarcere;
+  const f = t.formular;
+  const c = continut.texte.contact;
+  const pasi = s.pasi
+    .map((p) => `<li><strong>${esc(p.titlu)}</strong><span>${esc(p.text)}</span></li>`)
+    .join('');
+  const camp = (id, eticheta, tip = 'text', obligatoriu = true, extra = '') =>
+    `<label class="camp" for="f-${id}"><span>${esc(eticheta)}${obligatoriu ? ' <abbr title="*" aria-hidden="true">*</abbr>' : ''}</span><input id="f-${id}" name="${id}" type="${tip}"${obligatoriu ? ' required' : ''}${extra}></label>`;
+  return `
+      <section class="scena scena-intoarcere" id="intoarcere" data-scena="${index}" aria-labelledby="titlu-intoarcere">
+        <div class="panou panou-mare lasa-derulare">
+          <p class="panou-loc">${esc(s.supratitlu)}</p>
+          <h2 class="panou-titlu" id="titlu-intoarcere">${esc(s.titlu)}</h2>
+          <p class="panou-text">${esc(s.poveste)}</p>
+          <h3 class="panou-subtitlu">${esc(s.cum_titlu)}</h3>
+          <ol class="pasi">${pasi}</ol>
+          <h3 class="panou-subtitlu" id="comanda">${esc(s.comanda_titlu)}</h3>
+          <p class="panou-text">${esc(s.comanda_text)}</p>
+          <div class="rezumat" data-rezumat></div>
+          <form class="formular" data-formular novalidate>
+            ${camp('nume', f.nume, 'text', true, ' autocomplete="name"')}
+            <div class="camp-rand">
+              ${camp('email', f.email, 'email', true, ' autocomplete="email"')}
+              ${camp('telefon', f.telefon, 'tel', true, ' autocomplete="tel"')}
+            </div>
+            <div class="camp-rand">
+              ${camp('tara', f.tara, 'text', true, ' autocomplete="country-name"')}
+              ${camp('oras', f.oras, 'text', true, ' autocomplete="address-level2"')}
+            </div>
+            ${camp('adresa', f.adresa, 'text', true, ' autocomplete="street-address"')}
+            <label class="camp" for="f-mesaj"><span>${esc(f.mesaj)}</span><textarea id="f-mesaj" name="mesaj" rows="3"></textarea></label>
+            <label class="acord" for="f-acord"><input id="f-acord" name="acord" type="checkbox" required><span>${esc(f.acord)}</span></label>
+            <p class="formular-stare" data-stare role="status" aria-live="polite"></p>
+            <button type="submit" class="buton buton-plin">${esc(f.trimite)}</button>
+          </form>
+          <h3 class="panou-subtitlu">${esc(s.contact_titlu)}</h3>
+          <address class="contact">
+            <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>
+            <a href="tel:${esc(c.telefon_link)}">${esc(c.telefon)}</a>
+            <span>${esc(c.localitate)}, ${limba === 'ro' ? 'județul' : 'County'} ${esc(c.judet)}, ${limba === 'ro' ? 'România' : 'Romania'}</span>
+          </address>
+        </div>
+      </section>`;
+}
+
 function elementMeniu(scena, index, continut, limba) {
   const t = continut.texte[limba];
   if (scena.tip === 'produs') {
@@ -169,6 +224,7 @@ export function paginaLimba(continut, limba) {
   const sectiuni = traseu.scene
     .map((scena, i) => {
       if (scena.tip === 'deschidere') return sectiuneDeschidere(i, continut, limba);
+      if (scena.tip === 'intoarcere') return sectiuneIntoarcere(i, continut, limba);
       if (scena.tip === 'produs') {
         const p = produse.sortimente.find((x) => x.id === scena.produs);
         if (!p) throw new Error(`Produsul „${scena.produs}” nu există în continut/produse.yaml`);
@@ -189,6 +245,9 @@ export function paginaLimba(continut, limba) {
     limba,
     moneda: produse.moneda,
     ui: t.ui,
+    formular: t.formular,
+    contact: texte.contact,
+    scenaComanda: traseu.scene.findIndex((s) => s.tip === 'intoarcere'),
   };
 
   return `<!doctype html>
@@ -251,6 +310,7 @@ export function paginaLimba(continut, limba) {
       <div class="meniu-cap"><p class="meniu-titlu">${esc(t.ui.cos)}</p><button type="button" class="meniu-inchide" data-inchide>${esc(t.ui.inchide)}</button></div>
       <p class="cos-gol" data-cos-gol>${esc(t.ui.cos_gol)}</p>
       <ul class="cos-lista" data-cos-lista></ul>
+      <button type="button" class="buton buton-plin cos-continua" data-spre-comanda hidden>${esc(t.ui.trimite_cererea)}</button>
     </aside>
 
     <div class="harta" aria-hidden="true"></div>
@@ -304,9 +364,23 @@ export function paginaRadacina(continut) {
 `;
 }
 
+function sitemap(continut) {
+  const { texte } = continut;
+  const alt = texte.limbi
+    .map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${urlLimba(texte, l)}"/>`)
+    .join('');
+  const urls = texte.limbi.map((l) => `<url><loc>${urlLimba(texte, l)}</loc>${alt}</url>`).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>\n`;
+}
+
 export function genereaza() {
   const continut = incarcaContinut();
   writeFileSync(resolve(radacina, 'index.html'), paginaRadacina(continut));
+  writeFileSync(resolve(radacina, 'public', 'sitemap.xml'), sitemap(continut));
+  writeFileSync(
+    resolve(radacina, 'public', 'robots.txt'),
+    `User-agent: *\nAllow: /\nSitemap: ${continut.texte.domeniu}/sitemap.xml\n`,
+  );
   for (const limba of continut.texte.limbi) {
     mkdirSync(resolve(radacina, limba), { recursive: true });
     writeFileSync(resolve(radacina, limba, 'index.html'), paginaLimba(continut, limba));

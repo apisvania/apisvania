@@ -12,10 +12,14 @@ interface DateClient {
   limba: string;
   moneda: string;
   ui: Record<string, string>;
+  formular: Record<string, string>;
+  contact: { email: string; telefon: string };
+  scenaComanda: number;
 }
 
 const date: DateClient = JSON.parse(document.getElementById('date-client')!.textContent!);
 const ui = date.ui;
+const f = date.formular;
 const $ = <T extends Element = HTMLElement>(s: string, el: ParentNode = document) => el.querySelector(s) as T;
 const $$ = <T extends Element = HTMLElement>(s: string, el: ParentNode = document) => Array.from(el.querySelectorAll(s)) as T[];
 
@@ -87,6 +91,8 @@ function randeazaCos() {
   numar.textContent = String(n);
   numar.hidden = n === 0;
   $('[data-cos-gol]').hidden = n > 0;
+  $('[data-spre-comanda]').hidden = n === 0;
+  randeazaRezumat();
   const lista = $('[data-cos-lista]');
   lista.innerHTML = '';
   cos.articole.forEach((a, i) => {
@@ -142,8 +148,14 @@ const idLaIndex = new Map(sectiuni.map((s) => [s.id, Number(s.dataset.scena)]));
 function porneste() {
   const canvasLume = $<HTMLCanvasElement>('#lume-canvas');
   const canvasAlbina = $<HTMLCanvasElement>('#albina-canvas');
-  const blocata = (el: EventTarget | null) =>
-    !!sertarDeschis || (el instanceof Element && !!el.closest('.lasa-derulare'));
+  // Scrollable panels keep the wheel while they can still scroll that way.
+  const blocata = (el: EventTarget | null, dy?: number) => {
+    if (sertarDeschis) return true;
+    const p = el instanceof Element ? el.closest<HTMLElement>('.lasa-derulare') : null;
+    if (!p || p.scrollHeight <= p.clientHeight + 2) return false;
+    if (dy === undefined) return true;
+    return dy > 0 ? p.scrollTop + p.clientHeight < p.scrollHeight - 1 : p.scrollTop > 0;
+  };
   let calatorie: Calatorie;
   try {
     calatorie = new Calatorie(canvasLume, canvasAlbina, blocata);
@@ -198,6 +210,13 @@ function porneste() {
     if (mod(Math.round(calatorie.derulare.tinta), calatorie.N) !== i) calatorie.derulare.mergiLa(i);
   });
 
+  let focusComanda = false;
+  $('[data-spre-comanda]').addEventListener('click', () => {
+    if (sertarDeschis) inchide(sertarDeschis, false);
+    calatorie.derulare.mergiLa(date.scenaComanda);
+    focusComanda = true;
+  });
+
   const harta = construiesteHarta(calatorie.N);
   const indiciu = $('.indiciu-derulare');
   let ultimaScena = -1;
@@ -211,6 +230,14 @@ function porneste() {
       }
     });
     ultimVizibil = s.vizibil.slice();
+    document.documentElement.classList.toggle('noapte', s.scena === date.scenaComanda && s.detaliu > 0.15);
+    if (focusComanda && s.scena === date.scenaComanda && s.detaliu > 0.97) {
+      focusComanda = false;
+      const panou = $('#intoarcere .panou');
+      const tinta = $('#comanda');
+      panou.scrollTo({ top: tinta.offsetTop - 20, behavior: 'smooth' });
+      $<HTMLInputElement>('#f-nume').focus({ preventScroll: true });
+    }
     harta(s.p);
     if (indiciu && calatorie.derulare.inactiv < 1 && s.detaliu < 0.9) indiciu.classList.add('ascuns');
     if (s.detaliu > 0.95 && s.scena !== ultimaScena) {
@@ -262,5 +289,109 @@ function construiesteHarta(N: number) {
     nod.forEach((n, i) => n.classList.toggle('activ', i === activ));
   };
 }
+
+
+// ── Order request ──────────────────────────────────────────────────────
+function textComanda() {
+  return cos.articole
+    .map((a) => `${a.cantitate} × ${a.nume} ${a.gramaj}${a.pret == null ? '' : ` (${fmt.format(a.pret * a.cantitate)})`}`)
+    .join('\n');
+}
+function randeazaRezumat() {
+  const el = document.querySelector<HTMLElement>('[data-rezumat]');
+  if (!el) return;
+  if (!cos.articole.length) {
+    const p = document.createElement('p');
+    p.className = 'rezumat-gol';
+    p.textContent = f.cos_gol;
+    el.replaceChildren(p);
+    return;
+  }
+  const ul = document.createElement('ul');
+  for (const a of cos.articole) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span></span><span></span>';
+    li.children[0].textContent = `${a.cantitate} × ${a.nume}, ${a.gramaj}`;
+    li.children[1].textContent = a.pret == null ? ui.pret_la_cerere : fmt.format(a.pret * a.cantitate);
+    ul.append(li);
+  }
+  const toatePreturile = cos.articole.every((a) => a.pret != null);
+  const total = document.createElement('p');
+  total.className = 'rezumat-total';
+  total.textContent = toatePreturile
+    ? `${f.total}: ${fmt.format(cos.articole.reduce((s, a) => s + (a.pret ?? 0) * a.cantitate, 0))}`
+    : f.total_la_cerere;
+  el.replaceChildren(ul, total);
+}
+randeazaRezumat();
+
+const formular = document.querySelector<HTMLFormElement>('[data-formular]');
+formular?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const stare = $('[data-stare]', formular);
+  stare.className = 'formular-stare';
+  if (!cos.articole.length) {
+    stare.textContent = f.cos_gol;
+    stare.classList.add('eroare');
+    return;
+  }
+  if (!formular.checkValidity()) {
+    formular.classList.add('verificat');
+    stare.textContent = f.obligatoriu;
+    stare.classList.add('eroare');
+    formular.querySelector<HTMLElement>(':invalid')?.focus();
+    return;
+  }
+  const d = Object.fromEntries(new FormData(formular)) as Record<string, string>;
+  const buton = $<HTMLButtonElement>('button[type=submit]', formular);
+  buton.disabled = true;
+  buton.textContent = f.se_trimite;
+  const comanda = textComanda();
+  try {
+    // FormSubmit forwards the request to the Apisvania inbox (no server of our own).
+    const r = await fetch(`https://formsubmit.co/ajax/${date.contact.email}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Cerere de comandă Apisvania – ${d.nume}`,
+        _template: 'table',
+        _captcha: 'false',
+        _replyto: d.email,
+        Nume: d.nume,
+        Email: d.email,
+        Telefon: d.telefon,
+        Tara: d.tara,
+        Localitate: d.oras,
+        Adresa: d.adresa,
+        Mesaj: d.mesaj || '-',
+        Comanda: comanda,
+        Limba: date.limba,
+      }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || String(j.success) !== 'true') throw new Error('trimitere');
+    formular.hidden = true;
+    const ok = document.createElement('div');
+    ok.className = 'formular-succes';
+    ok.innerHTML = '<p class="panou-subtitlu"></p><p></p>';
+    ok.children[0].textContent = f.succes_titlu;
+    ok.children[1].textContent = f.succes_text;
+    formular.after(ok);
+    while (cos.articole.length) cos.seteazaCantitate(0, 0);
+    spune(f.succes_text);
+  } catch {
+    stare.classList.add('eroare');
+    const corp = encodeURIComponent(`${comanda}\n\n${d.nume}\n${d.telefon}\n${d.adresa}, ${d.oras}, ${d.tara}\n\n${d.mesaj ?? ''}`);
+    stare.innerHTML = '<span></span> <a></a> · <span></span>';
+    stare.children[0].textContent = f.eroare;
+    const a = stare.children[1] as HTMLAnchorElement;
+    a.href = `mailto:${date.contact.email}?subject=${encodeURIComponent('Cerere de comandă Apisvania')}&body=${corp}`;
+    a.textContent = date.contact.email;
+    stare.children[2].textContent = date.contact.telefon;
+  } finally {
+    buton.disabled = false;
+    buton.textContent = f.trimite;
+  }
+});
 
 porneste();

@@ -10,6 +10,15 @@ limbi: [ro, en]
 limba_implicita: ro
 domeniu: https://apisvania.com
 
+# Datele de contact (apar pe site și în cererile de comandă).
+contact:
+  email: apisvania@gmail.com
+  telefon: '+40 749 031 858'
+  telefon_link: '+40749031858'
+  localitate: Săliștea Nouă
+  judet: Cluj
+  tara: RO
+
 ro:
   nume_limba: Română
   meta:
@@ -43,7 +52,39 @@ ro:
       titlu: Fiecare borcan, un loc anume.
       text: Urmează albina prin livezi în floare, păduri de salcâm, câmpuri sălbatice, păduri de brad și pajiști alpine. Fiecare peisaj are mierea lui.
     intoarcere:
-      eticheta: Întoarcerea
+      eticheta: Întoarcerea acasă
+      supratitlu: Apisvania
+      titlu: Povestea noastră
+      poveste: Apisvania este o stupină din Săliștea Nouă, în dealurile Clujului. Urmăm înflorirea de la livezile de primăvară până la pajiștile alpine și păstrăm separat mierea fiecărui loc, ca să ajungă în borcan exact gustul peisajului din care vine.
+      cum_titlu: Cum lucrăm
+      pasi:
+        - titlu: Urmăm florile
+          text: Stupii merg acolo unde înflorește sortimentul pe care îl așteptăm.
+        - titlu: Recoltăm separat
+          text: Fiecare miere se recoltează la momentul ei și nu se amestecă cu altele.
+        - titlu: Un loc pe fiecare borcan
+          text: Pe etichetă scriem locul și anul recoltei.
+      comanda_titlu: Cererea de comandă
+      comanda_text: Nu plătești online. Trimite-ne cererea, iar noi îți confirmăm disponibilitatea, prețul final și costul livrării, prin e-mail sau telefon.
+      contact_titlu: Contact
+  formular:
+    nume: Nume și prenume
+    email: E-mail
+    telefon: Telefon
+    tara: Țara
+    oras: Localitatea
+    adresa: Adresa de livrare
+    mesaj: Mesaj (opțional)
+    acord: Sunt de acord ca Apisvania să folosească aceste date doar pentru a răspunde cererii mele.
+    trimite: Trimite cererea de comandă
+    se_trimite: Se trimite…
+    cos_gol: Coșul e gol. Adaugă cel puțin un borcan din peisajele de pe traseu.
+    total: Total estimat
+    total_la_cerere: Prețul final îl confirmăm noi.
+    succes_titlu: Mulțumim!
+    succes_text: Am primit cererea ta. Te contactăm în curând pentru confirmare.
+    eroare: Cererea nu a putut fi trimisă. Încearcă din nou sau scrie-ne direct.
+    obligatoriu: Completează câmpurile marcate.
   caracteristici:
     culoare: Culoare
     aroma: Aromă
@@ -83,7 +124,39 @@ en:
       titlu: Every jar, one particular place.
       text: Follow the bee through blossoming orchards, acacia woods, wild meadows, fir forests and alpine heaths. Each landscape has a honey of its own.
     intoarcere:
-      eticheta: The return
+      eticheta: The way home
+      supratitlu: Apisvania
+      titlu: Our story
+      poveste: Apisvania is an apiary in Săliștea Nouă, in the hills of Cluj, Romania. We follow the bloom from the spring orchards to the alpine heaths and keep each place's honey separate, so that every jar holds the exact taste of the landscape it comes from.
+      cum_titlu: How we work
+      pasi:
+        - titlu: We follow the flowers
+          text: The hives go where the variety we are waiting for comes into bloom.
+        - titlu: We harvest separately
+          text: Each honey is harvested at its own time and never blended with others.
+        - titlu: One place on every jar
+          text: The label names the place and the year of the harvest.
+      comanda_titlu: Order request
+      comanda_text: There is no online payment. Send us your request and we will confirm availability, the final price and delivery cost by email or phone.
+      contact_titlu: Contact
+  formular:
+    nume: Full name
+    email: Email
+    telefon: Phone
+    tara: Country
+    oras: Town or city
+    adresa: Delivery address
+    mesaj: Message (optional)
+    acord: I agree that Apisvania may use these details only to reply to my request.
+    trimite: Send order request
+    se_trimite: Sending…
+    cos_gol: Your basket is empty. Add at least one jar from the landscapes along the route.
+    total: Estimated total
+    total_la_cerere: We will confirm the final price.
+    succes_titlu: Thank you!
+    succes_text: We have received your request and will contact you soon to confirm it.
+    eroare: The request could not be sent. Please try again or write to us directly.
+    obligatoriu: Please fill in the marked fields.
   caracteristici:
     culoare: Colour
     aroma: Aroma

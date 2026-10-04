@@ -1,6 +1,6 @@
-// Visual style of the world. The default is the sketch style; the Japanese
-// ink-painting variant (sumi-e, with kasumi mist bands and a red sun) is an
-// experiment, switched on with ?stil=japonez or VITE_STIL=japonez at build time.
+// Visual style of the world. The default is Japanese ink painting (sumi-e,
+// with kasumi mist bands and a red sun). The earlier sketch style is kept and
+// can be seen with ?stil=schita or VITE_STIL=schita at build time.
 
 import type { Mediu } from './randare';
 import { hex } from './util';
@@ -16,7 +16,7 @@ function alege(): Stil {
     /* ignore */
   }
   const s = dinAdresa ?? dinBuild;
-  return s === 'japonez' ? 'japonez' : 'schita';
+  return s === 'schita' ? 'schita' : 'japonez';
 }
 
 export const STIL: Stil = alege();
@@ -42,9 +42,11 @@ export function ton(culoare: string): string {
     else h = (r - g) / d + 4;
     h /= 6;
   }
-  const roz = h > 0.88 || h < 0.03;
-  s *= roz ? 0.85 : 0.38;
-  const l2 = roz ? l : l * 0.94;
+  // Flowers keep their colour (pinks, reds, yellows, violets); leaves,
+  // earth and sky are muted towards ink and silk.
+  const floare = h > 0.72 || h < 0.03 || (h > 0.1 && h < 0.18);
+  s *= floare ? 0.92 : 0.5;
+  const l2 = floare ? l : l * 0.95;
   const q = l2 < 0.5 ? l2 * (1 + s) : l2 + s - l2 * s;
   const p = 2 * l2 - q;
   const f = (t: number) => {
@@ -61,7 +63,9 @@ export function ton(culoare: string): string {
 
 /** Silk-paper skies and a vermilion sun for the Japanese variant. */
 export function mediuStil(id: string, m: Mediu): Mediu {
-  if (!JAPONEZ) return m;
+  // Only the two first scenes were drawn before the Japanese style; the
+  // later scenes define their Japanese skies directly.
+  if (!JAPONEZ || (id !== 'deschidere' && id !== 'primavara')) return m;
   const zori = id === 'deschidere';
   return {
     ...m,

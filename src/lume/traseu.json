@@ -1,7 +1,14 @@
 {
-  "comentariu": "Ordinea scenelor din călătorie. Fiecare scenă are un peisaj construit în src/lume/scene/. Fragmentul inițial conține doar primele două.",
+  "comentariu": "Ordinea scenelor din călătorie. Fiecare scenă are un peisaj construit în src/lume/scene/. După ultima scenă, albina se întoarce la prima.",
   "scene": [
     { "id": "deschidere", "tip": "deschidere" },
-    { "id": "primavara", "tip": "produs", "produs": "primavara" }
+    { "id": "primavara", "tip": "produs", "produs": "primavara" },
+    { "id": "rapita", "tip": "produs", "produs": "rapita" },
+    { "id": "salcam", "tip": "produs", "produs": "salcam" },
+    { "id": "poliflora", "tip": "produs", "produs": "poliflora" },
+    { "id": "mana-brad", "tip": "produs", "produs": "mana-brad" },
+    { "id": "zmeura", "tip": "produs", "produs": "zmeura" },
+    { "id": "iarba-neagra", "tip": "produs", "produs": "iarba-neagra" },
+    { "id": "intoarcere", "tip": "intoarcere" }
   ]
 }

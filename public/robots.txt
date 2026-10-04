@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://apisvania.com/sitemap.xml

@@ -182,16 +182,15 @@ void main() {
   float ds1 = length(ds);
   float disc = smoothstep(u_soare.z * 1.04, u_soare.z * 0.96, ds1);
   if (u_stil > 0.5) {
-    // A flat vermilion disc, as in woodblock prints.
+    // A flat vermilion disc (or a pale moon), as in woodblock prints.
     c = mix(c, u_soareCul, disc * 0.92);
-    o = vec4(c + (h21(fc + u_timp) - 0.5) / 255.0, 1.0);
-    return;
+  } else {
+    c = mix(c, c + u_soareCul * 0.9, disc);
+    float unghi = atan(ds.y, ds.x);
+    float raza = u_soare.z * (1.0 + 0.04 * sin(unghi * 3.0 + 1.0));
+    float inel = smoothstep(0.0025, 0.0, abs(ds1 - raza)) * (0.55 + 0.45 * sin(unghi * 2.0 + 0.5));
+    c = mix(c, vec3(0.24, 0.21, 0.18), inel * 0.45);
   }
-  c = mix(c, c + u_soareCul * 0.9, disc);
-  float unghi = atan(ds.y, ds.x);
-  float raza = u_soare.z * (1.0 + 0.04 * sin(unghi * 3.0 + 1.0));
-  float inel = smoothstep(0.0025, 0.0, abs(ds1 - raza)) * (0.55 + 0.45 * sin(unghi * 2.0 + 0.5));
-  c = mix(c, vec3(0.24, 0.21, 0.18), inel * 0.45);
 
   // Stars (fade near the horizon).
   if (u_stele > 0.001 && ey > 0.0) {

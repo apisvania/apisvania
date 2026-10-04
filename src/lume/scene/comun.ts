@@ -4,7 +4,7 @@
 import type { Mediu, Carte } from '../randare';
 import type { ContextScena } from '../lume';
 import { hex } from '../util';
-import { deal, fasie, type OptFasie, type Floare } from '../pictura/teren';
+import { deal, fasie, ceata, type OptFasie, type Floare } from '../pictura/teren';
 import { tufaFlori } from '../pictura/stupina';
 import { pom, PALETE } from '../pictura/copaci';
 
@@ -117,4 +117,119 @@ export function dealuriInflorite(ctx: ContextScena, nume: string, zDe: number, z
       if (ctx.liber(xt, z, 4, 8)) ctx.adauga({ tex: r.pick(copaci), x: xt, y: sol(z) - 0.2, z, w: 8 * mt, h: 8 * mt, leganare: 0.1, faza: r.range(0, 6) });
     }
   }
+}
+
+// ── A generic landscape scene ───────────────────────────────────────────
+
+import type { DefinitieScena, Incadrare, ParticuleScena } from '../lume';
+
+export interface Element {
+  cheie: string;
+  pictura: (seed: number) => HTMLCanvasElement;
+  variante?: number;
+  numar: number;
+  /** z range relative to the landing target. */
+  zona: [number, number];
+  /** Lateral spread (± metres around the target). */
+  lat: number;
+  w: number;
+  h: number;
+  leganare?: number;
+  /** Height used to keep the flight corridor clear. */
+  inaltime: number;
+  repetare?: boolean;
+}
+
+export interface OptPeisaj {
+  id: string;
+  lungime?: number;
+  sol: number;
+  tinta: { x: number; inaltime: number };
+  incadrare?: Incadrare;
+  mediu: MediuHex;
+  claritate?: number;
+  zbor?: number;
+  solCuloare: string;
+  floriSol: Floare[];
+  orizont: Omit<OptStratOrizont, 'cheie' | 'seed'>[];
+  erou: (seed: number) => { canvas: HTMLCanvasElement; ancora: { u: number; v: number } };
+  erouMarime?: { w: number; h: number };
+  dealuri?: { dz: number; x: number; w: number; banda: number; spalare: string; padure?: OptStratOrizont['padure']; livada?: { culoare: string; randuri: number; marime: number } }[];
+  elemente: Element[];
+  particule?: ParticuleScena;
+  /** Flowers for the flowering hills on the way to the next scene (omit for none). */
+  floriDrum?: Floare[];
+  ceata?: { dz: number; x: number; w: number }[];
+}
+
+export function scenaPeisaj(o: OptPeisaj): DefinitieScena {
+  const marime = o.erouMarime ?? { w: 2.6, h: 1.3 };
+  return {
+    id: o.id,
+    lungime: o.lungime ?? 240,
+    sol: o.sol,
+    tinta: o.tinta,
+    aterizare: true,
+    incadrare: o.incadrare ?? { lat: [0.34, 0.5], port: [0.5, 0.27] },
+    claritate: o.claritate ?? 0.35,
+    zbor: o.zbor ?? 13,
+    mediu: mediu(o.mediu),
+    particule: o.particule,
+    fasii: (ctx) => biom(ctx, o.id, { sol: o.solCuloare, flori: o.floriSol }),
+    fundal: (ctx) => o.orizont.map((s, i) => stratOrizont(ctx, { ...s, cheie: `orizont-${i}`, seed: 600 + i * 7 + o.id.length })),
+    construieste(ctx) {
+      const { r, z0, sol, tinta } = ctx;
+      let ancora = { u: 0.31, v: 0.42 };
+      const tErou = ctx.tex('erou', () => {
+        const e = o.erou(101 + o.id.length);
+        ancora = e.ancora;
+        return e.canvas;
+      });
+      ctx.adauga({
+        tex: tErou,
+        get x() {
+          return tinta.x + (0.5 - ancora.u) * marime.w;
+        },
+        get y() {
+          return tinta.y - (1 - ancora.v) * marime.h;
+        },
+        z: tinta.z,
+        w: marime.w,
+        h: marime.h,
+        leganare: 0.004,
+        ceata: 0.1,
+        aproape: [0.25, 0.8],
+      });
+
+      for (const d of o.dealuri ?? []) {
+        const z = z0 + d.dz;
+        const t = ctx.tex(`deal-${d.dz}`, () =>
+          deal({ seed: 40 + d.dz, sol: o.solCuloare, spalare: d.spalare, creasta: 0.28, amplitudine: 0.3, frecventa: 4, padure: d.padure, livada: d.livada }),
+        );
+        ctx.adauga({ tex: t, x: d.x, y: sol(z) + d.banda * 0.6 - 300, z, w: d.w, h: 300, banda: d.banda });
+      }
+
+      for (const el of o.elemente) {
+        const texturi = Array.from({ length: el.variante ?? 2 }, (_, i) => ctx.tex(`${el.cheie}-${i}`, () => el.pictura(700 + i * 13 + el.cheie.length), el.repetare));
+        for (let i = 0; i < el.numar; i++) {
+          const dz = r.range(el.zona[0], el.zona[1]);
+          const z = z0 + dz;
+          const x = tinta.x + r.range(-el.lat, el.lat);
+          if (Math.abs(dz) < 8 && Math.abs(x - tinta.x) < 5 + el.w * 0.4) continue;
+          if (!ctx.liber(x, z, el.w * 0.45, el.inaltime)) continue;
+          const m = r.range(0.85, 1.2);
+          ctx.adauga({ tex: r.pick(texturi), x, y: sol(z) - 0.15, z, w: el.w * m, h: el.h * m, leganare: el.leganare ?? 0.05, faza: r.range(0, 6), oglinda: r.chance(0.5) });
+        }
+      }
+
+      if (o.ceata?.length) {
+        const tCeata = ctx.tex('ceata', () => ceata(9, '#fbf4ec'));
+        for (const c of o.ceata) {
+          const z = z0 + c.dz;
+          ctx.adauga({ tex: tCeata, x: c.x, y: sol(z) - 2, z, w: c.w, h: c.w * 0.09, ceata: 0.2, opacitate: 0.6, aproape: [20, 45] });
+        }
+      }
+      if (o.floriDrum) dealuriInflorite(ctx, o.id, z0 + 30, z0 + (o.lungime ?? 240) - 50, o.floriDrum);
+    },
+  };
 }

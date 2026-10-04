@@ -283,7 +283,7 @@ export class Lume {
         w,
         h: w * 0.125,
         ceata: 0.25,
-        aproape: [6, 14],
+        aproape: [30, 70],
         oglinda: r.chance(0.5),
       });
     }
@@ -346,13 +346,14 @@ export class Lume {
       const pz = e.pictura();
       e.t = this.randare.incarcaTextura(pz, e.repetare);
       pz.width = pz.height = 0;
-      if (e.repetare && e.cheie.includes('/fasie-') && !this.fasieRezerva) this.fasieRezerva = e.t;
+      if (e.repetare && e.cheie.includes('/fasie-') && distCirc(e.scena, scena, this.N) === 0) this.fasieRezerva = e.t;
       n++;
     }
     // Free textures of scenes far away (only matters for long loops).
     if (this.N > 5) {
       for (const e of this.texturi.values()) {
         if (e.t && distCirc(e.scena, scena, this.N) > 2) {
+          if (e.t === this.fasieRezerva) this.fasieRezerva = null;
           this.randare.stergeTextura(e.t);
           e.t = null;
         }

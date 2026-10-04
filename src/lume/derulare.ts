@@ -26,7 +26,7 @@ export class Derulare {
 
   constructor(
     private N: number,
-    private esteBlocata: (el: EventTarget | null) => boolean,
+    private esteBlocata: (el: EventTarget | null, dy?: number) => boolean,
   ) {
     addEventListener('wheel', this.rotita, { passive: false });
     addEventListener('touchstart', this.atingeStart, { passive: true });
@@ -37,7 +37,7 @@ export class Derulare {
   }
 
   private rotita = (e: WheelEvent) => {
-    if (!this.activa || this.esteBlocata(e.target) || e.ctrlKey) return;
+    if (!this.activa || this.esteBlocata(e.target, e.deltaY) || e.ctrlKey) return;
     e.preventDefault();
     let d = e.deltaY + (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0);
     if (e.deltaMode === 1) d *= 32;

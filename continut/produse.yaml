@@ -50,6 +50,36 @@ sortimente:
       - gramaj: 500 g
         pret: PRET_DE_COMPLETAT
 
+  - id: rapita
+    disponibil: true
+    nume:
+      ro: Miere de rapiță
+      en: Rapeseed Honey
+    loc:
+      ro: Câmpul de rapiță înflorită
+      en: The flowering rapeseed fields
+    descriere:
+      ro: Culeasă la sfârșitul primăverii, din câmpurile de rapiță înflorite galben până la orizont. Aproape albă, cu o aromă florală discretă și un gust dulce, blând. Cristalizează foarte repede, într-o cremă fină, catifelată, ușor de întins.
+      en: Gathered in late spring, from rapeseed fields flowering yellow to the horizon. Almost white, with a quiet floral aroma and a gentle, sweet taste. It crystallises very quickly into a fine, velvety cream that spreads easily.
+    caracteristici:
+      culoare:
+        ro: albă-gălbuie, aproape albă cristalizată
+        en: pale yellow, almost white when set
+      aroma:
+        ro: florală, discretă, blândă
+        en: floral, quiet, mild
+      textura:
+        ro: cristalizează în câteva zile, cremă fină
+        en: sets within days into a fine cream
+      recoltare:
+        ro: aprilie – mai
+        en: April – May
+    variante:
+      - gramaj: 250 g
+        pret: PRET_DE_COMPLETAT
+      - gramaj: 500 g
+        pret: PRET_DE_COMPLETAT
+
   - id: salcam
     disponibil: true
     nume:
